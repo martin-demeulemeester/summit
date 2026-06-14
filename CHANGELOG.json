@@ -1,0 +1,38 @@
+{
+  "name": "summit",
+  "versions": [
+    {
+      "version": "0.2.0",
+      "date": "2026-06-14",
+      "changes": {
+        "added": [
+          "Sauvegarde cloud Supabase : auth lien magique + synchro logs/réglages (last-write-wins)",
+          "Notifications Web Push : service worker injectManifest (push + notificationclick) et abonnement depuis les Réglages",
+          "Fonction Edge send-reminders (Deno) + cron pg_cron pour les rappels dus, gestion du fuseau par appareil",
+          "Schéma SQL + RLS (supabase/migrations) et guide SETUP-CLOUD.md",
+          "Section Compte & sauvegarde cloud dans les Réglages"
+        ],
+        "notes": [
+          "Dégradation gracieuse : sans variables Supabase, l'app reste 100% fonctionnelle en local"
+        ]
+      }
+    },
+    {
+      "version": "0.1.0",
+      "date": "2026-06-14",
+      "changes": {
+        "added": [
+          "Suivi de routine quotidienne (soins visage matin/soir, pieds, 1h dev, 1h prépa MP2I)",
+          "Sport : 4 blocs/jour avec séance guidée et minuteurs (repos, gainage)",
+          "Système de série (streak) et de jokers (1 joker par semaine parfaite)",
+          "Progression automatique suggérée après 7 jours complets",
+          "Page Historique (calendrier 5 semaines) et Progression (graphique 14 jours)",
+          "Réglages (rappels, cibles, notifications, reset)",
+          "PWA installable + mode hors-ligne",
+          "Stockage local IndexedDB (Dexie)",
+          "Tests unitaires Vitest (streak/joker, progression)"
+        ]
+      }
+    }
+  ]
+}

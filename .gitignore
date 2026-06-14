@@ -1,0 +1,33 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Éditeurs
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# PWA généré
+dev-dist
+
+# Config locale de l'outillage
+.claude
+
+# Fichiers SQL locaux contenant des secrets (CRON_SECRET, etc.)
+supabase/migrations/*.local.sql
+
+# Cache CLI Supabase
+supabase/.temp
+
+# Artefacts de build TypeScript
+*.tsbuildinfo

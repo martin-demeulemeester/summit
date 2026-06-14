@@ -1,0 +1,6 @@
+# Configuration Supabase CLI pour Summit.
+project_id = "zqewmuywqyxpsusgvhlp"
+
+[functions.send-reminders]
+# Sécurité assurée par le secret partagé CRON_SECRET (pas de JWT requis).
+verify_jwt = false

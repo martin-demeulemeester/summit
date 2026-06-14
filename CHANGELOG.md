@@ -1,0 +1,45 @@
+# Changelog
+
+Toutes les modifications notables de Summit sont documentées dans ce fichier.
+Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
+respecte [SemVer](https://semver.org/lang/fr/).
+
+## [0.2.0] - 2026-06-14
+
+### Ajouté
+
+- Sauvegarde cloud via Supabase : connexion par lien magique, synchronisation
+  automatique des logs et réglages (résolution de conflits « dernière écriture
+  gagnante »).
+- Notifications Web Push : service worker (stratégie injectManifest) avec gestion
+  des push et du clic, abonnement depuis les Réglages.
+- Fonction Edge `send-reminders` (Deno) + planification pg_cron pour envoyer les
+  rappels dus (tâches non faites + relance sport de fin de journée), avec gestion
+  du fuseau horaire par appareil.
+- Schéma SQL + Row Level Security (`supabase/migrations/`) et guide d'installation
+  `SETUP-CLOUD.md`.
+- Section « Compte & sauvegarde cloud » dans les Réglages.
+
+### Notes
+
+- Toutes les fonctionnalités cloud/push se dégradent gracieusement : sans variables
+  d'environnement Supabase, l'app reste pleinement fonctionnelle en local.
+
+## [0.1.0] - 2026-06-14
+
+### Ajouté
+
+- Suivi de routine quotidienne : soins visage matin/soir, soin des pieds, 1 h de
+  dev, 1 h de prépa MP2I.
+- Sport : 4 blocs par jour (tractions, pompes, gainage) avec séance guidée et
+  minuteurs de repos et de gainage.
+- Logique de série (streak) et système de jokers (1 joker gagné par semaine
+  parfaite, consommé pour couvrir une journée ratée).
+- Progression : suggestion automatique d'augmentation des cibles après 7 jours
+  de sport complets au même palier.
+- Page Historique : calendrier des 5 dernières semaines + statistiques.
+- Page Progression : graphique des 14 derniers jours.
+- Réglages : heures de rappel, cibles, autorisation des notifications, reset.
+- PWA installable (manifest, service worker, mode hors-ligne).
+- Stockage local (IndexedDB via Dexie).
+- Tests unitaires de la logique streak/joker et progression (Vitest).

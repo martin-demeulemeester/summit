@@ -1,0 +1,9 @@
+# Leçons - Summit
+
+Format : [date] | ce qui a mal tourné | règle pour l'éviter
+
+- 2026-06-14 | `getSettings()` faisait un `db.settings.put()` à l'intérieur d'un `useLiveQuery`, ce qui lève une `DexieError` (les callbacks de liveQuery sont en lecture seule) et plantait l'écran Sport. | Ne jamais écrire dans la base depuis un `useLiveQuery` : la fonction observée doit être en lecture seule. Initialiser/persister les valeurs par défaut hors liveQuery (ici `ensureSettings()` appelé au démarrage dans `main.tsx`), et exposer un lecteur pur (`readSettings()`).
+- 2026-06-14 | Le push échouait avec « Registration failed - push service error » sur Brave (services Google de push désactivés par défaut). | Sur Brave, activer `brave://settings/privacy` -> « Use Google services for push messaging » puis relancer. À documenter pour tout testeur sur Brave/Chromium dégooglisé.
+- 2026-06-14 | Le service worker n'est pas actif en `npm run dev` (vite-plugin-pwa `devOptions.enabled` à false par défaut), donc impossible de s'abonner au push en dev. | Mettre `devOptions.enabled: true` (type module) pour tester le push sur localhost (contexte sécurisé). Le vrai test reste sur la PWA installée en HTTPS.
+- 2026-06-14 | Tester un rappel « dû » était piégeux : fenêtre de déclenchement de 15 min + l'heure vue par la fonction (UTC serveur + tz_offset) pouvait différer de l'horloge du PC. | Pour tester, ajouter un mode debug temporaire renvoyant `localMinutes`/réglages, et caler le rappel sur l'heure vue par la fonction, pas sur l'horloge locale.
+- 2026-06-14 | Le déploiement de fonction Edge via l'éditeur dashboard a échoué silencieusement (liste vide). | Préférer la CLI (`npx supabase functions deploy ... --project-ref`) qui marche sans Docker (déploiement par API) et montre les erreurs ; config dans `supabase/config.toml` (`verify_jwt = false`).

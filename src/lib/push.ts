@@ -15,7 +15,7 @@ export function pushSupported(): boolean {
 }
 
 /** Abonne l'appareil aux notifications push et enregistre l'abonnement côté cloud. */
-export async function enablePush(userId: string): Promise<void> {
+export async function enablePush(sessionToken: string): Promise<void> {
   if (!isPushConfigured || !supabase || !VAPID_PUBLIC_KEY) {
     throw new Error('Cloud ou clé VAPID non configurés')
   }
@@ -34,28 +34,26 @@ export async function enablePush(userId: string): Promise<void> {
     }))
 
   const json = subscription.toJSON()
-  const { error } = await supabase.from('push_subscriptions').upsert({
-    user_id: userId,
-    endpoint: json.endpoint,
-    subscription: json,
-    // Minutes à ajouter à l'heure UTC pour obtenir l'heure locale (ex. +120 pour UTC+2).
-    tz_offset: -new Date().getTimezoneOffset(),
-    updated_at: Date.now(),
+  const { error } = await supabase.rpc('summit_upsert_push_subscription', {
+    session_token: sessionToken,
+    endpoint_value: json.endpoint,
+    subscription_payload: json,
+    tz_offset_value: -new Date().getTimezoneOffset(),
+    updated_at_value: Date.now(),
   })
   if (error) throw error
 }
 
 /** Désabonne l'appareil et supprime l'abonnement côté cloud. */
-export async function disablePush(userId: string): Promise<void> {
+export async function disablePush(sessionToken: string): Promise<void> {
   if (!supabase || !pushSupported()) return
   const registration = await navigator.serviceWorker.ready
   const subscription = await registration.pushManager.getSubscription()
   if (!subscription) return
-  await supabase
-    .from('push_subscriptions')
-    .delete()
-    .eq('user_id', userId)
-    .eq('endpoint', subscription.endpoint)
+  await supabase.rpc('summit_delete_push_subscription', {
+    session_token: sessionToken,
+    endpoint_value: subscription.endpoint,
+  })
   await subscription.unsubscribe()
 }
 

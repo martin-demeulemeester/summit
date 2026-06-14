@@ -20,7 +20,8 @@
 
 ## À tester après configuration cloud (voir SETUP-CLOUD.md)
 
-- [ ] Réglages -> Compte : création de compte puis connexion pseudo + mot de passe
+- [ ] SQL Editor Supabase : exécuter `supabase/migrations/0003_custom_auth.sql`
+- [ ] Réglages -> Compte : création de compte puis connexion pseudo + mot de passe, sans e-mail reçu
 - [ ] Synchroniser maintenant -> données visibles depuis un autre navigateur/appareil
 - [ ] Activer les notifications push, puis recevoir un rappel planifié **app fermée**
 - [ ] Vérifier que seules les tâches non faites déclenchent un rappel

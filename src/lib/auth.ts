@@ -1,73 +1,96 @@
 import { useEffect, useState } from 'react'
-import type { User } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 
-/** État d'authentification réactif. */
-export function useAuth(): { user: User | null; loading: boolean } {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+const SESSION_KEY = 'summit.session'
 
-  useEffect(() => {
-    if (!supabase) {
-      setLoading(false)
-      return
-    }
-    supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null)
-      setLoading(false)
-    })
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-    return () => sub.subscription.unsubscribe()
-  }, [])
-
-  return { user, loading }
+export interface SummitProfile {
+  id: string
+  pseudo: string
 }
 
-/** Transforme un pseudo en identifiant e-mail interne pour Supabase. */
-function pseudoToInternalEmail(pseudo: string): string {
-  const normalized = pseudo
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9_-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
+export interface SummitSession {
+  token: string
+  profile: SummitProfile
+}
 
-  if (normalized.length < 2) {
-    throw new Error('Le pseudo doit contenir au moins 2 caractères.')
+function readStoredSession(): SummitSession | null {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY)
+    return raw ? (JSON.parse(raw) as SummitSession) : null
+  } catch {
+    return null
   }
+}
 
-  return `${normalized}@summit.example.com`
+function storeSession(session: SummitSession | null): void {
+  if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+  else localStorage.removeItem(SESSION_KEY)
+  window.dispatchEvent(new Event('summit-auth-change'))
+}
+
+function parseAuthPayload(payload: unknown): SummitSession {
+  const data = payload as { token?: string; profile?: { id?: string; pseudo?: string } }
+  if (!data.token || !data.profile?.id || !data.profile?.pseudo) {
+    throw new Error('Réponse auth invalide')
+  }
+  return {
+    token: data.token,
+    profile: {
+      id: data.profile.id,
+      pseudo: data.profile.pseudo,
+    },
+  }
+}
+
+/** État d'authentification maison réactif. */
+export function useAuth(): { session: SummitSession | null; user: SummitProfile | null; loading: boolean } {
+  const [session, setSession] = useState<SummitSession | null>(() => readStoredSession())
+
+  useEffect(() => {
+    const refresh = () => setSession(readStoredSession())
+    window.addEventListener('summit-auth-change', refresh)
+    window.addEventListener('storage', refresh)
+    return () => {
+      window.removeEventListener('summit-auth-change', refresh)
+      window.removeEventListener('storage', refresh)
+    }
+  }, [])
+
+  return { session, user: session?.profile ?? null, loading: false }
 }
 
 /** Connexion avec pseudo + mot de passe. */
 export async function signInWithPseudo(pseudo: string, password: string): Promise<void> {
   if (!supabase) throw new Error('Cloud non configuré')
-  const { error } = await supabase.auth.signInWithPassword({
-    email: pseudoToInternalEmail(pseudo),
-    password,
+  const { data, error } = await supabase.rpc('summit_signin', {
+    raw_pseudo: pseudo,
+    raw_password: password,
   })
   if (error) throw error
+  storeSession(parseAuthPayload(data))
 }
 
 /** Création de compte avec pseudo + mot de passe. */
 export async function signUpWithPseudo(pseudo: string, password: string): Promise<void> {
   if (!supabase) throw new Error('Cloud non configuré')
-  const cleanPseudo = pseudo.trim()
-  const { error } = await supabase.auth.signUp({
-    email: pseudoToInternalEmail(cleanPseudo),
-    password,
-    options: {
-      data: { pseudo: cleanPseudo },
-    },
+  const { data, error } = await supabase.rpc('summit_signup', {
+    raw_pseudo: pseudo,
+    raw_password: password,
   })
   if (error) throw error
+  storeSession(parseAuthPayload(data))
+}
+
+export function getSessionToken(): string | null {
+  return readStoredSession()?.token ?? null
 }
 
 /** Déconnexion. */
 export async function signOut(): Promise<void> {
-  await supabase?.auth.signOut()
+  const token = getSessionToken()
+  if (supabase && token) {
+    const { error } = await supabase.rpc('summit_signout', { session_token: token })
+    if (error) console.warn('Déconnexion cloud échouée', error)
+  }
+  storeSession(null)
 }

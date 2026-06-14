@@ -1,7 +1,7 @@
 # Summit - Suivi des tâches
 
 Projet : PWA de suivi de routine quotidienne (React + TS + Vite + Tailwind + Dexie).
-Version courante : 0.5.0
+Version courante : 0.6.0
 
 ## Fait (V1 - coeur local)
 
@@ -13,7 +13,7 @@ Version courante : 0.5.0
 
 ## Fait (V1 - cloud & notifications)
 
-- [x] Phase 4 - Cloud Supabase : client, auth pseudo + mot de passe, tables + RLS, synchro local <-> cloud (last-write-wins)
+- [x] Phase 4 - Cloud Supabase : client, auth maison pseudo + mot de passe, tables + RLS/RPC, synchro local <-> cloud (last-write-wins)
 - [x] Phase 5 - Notifications push : SW injectManifest (push/click), abonnement client, Edge Function `send-reminders` + cron
 - [x] Guide d'installation `SETUP-CLOUD.md`, schéma SQL, fonction Edge
 
@@ -36,6 +36,10 @@ Version courante : 0.5.0
   - Adapter la section Compte dans les Réglages
   - Mettre à jour version, changelog et documentation
   - Vérifier avec TypeScript (`tsc --noEmit`) ; build/tests Vite à relancer hors sandbox si nécessaire
+- [x] Remplacer Supabase Auth par une auth maison
+  - Ajouter `supabase/migrations/0003_custom_auth.sql`
+  - Stocker profils, sessions et hashes côté Postgres
+  - Faire passer sync/push par RPC Summit
 - [ ] Activer le cron automatique : exécuter `supabase/migrations/0002_cron.sql` dans le SQL Editor
 - [ ] Déployer la PWA en HTTPS (Netlify/Vercel/Cloudflare) pour le push téléphone, app fermée
 - [ ] Installer la PWA sur Android + activer le push dessus

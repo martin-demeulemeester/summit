@@ -18,6 +18,10 @@ Dans **SQL Editor**, exécute le contenu de
 [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql)
 (tables `daily_logs`, `settings`, `push_subscriptions` + Row Level Security).
 
+Puis exécute [`supabase/migrations/0003_custom_auth.sql`](supabase/migrations/0003_custom_auth.sql)
+pour activer l'auth maison pseudo + mot de passe (profils, sessions, hash côté
+Postgres et fonctions RPC Summit).
+
 ## 3. Configurer l'app (front)
 
 Copie `.env.example` en `.env.local` et renseigne :
@@ -32,10 +36,8 @@ Relance `npm run dev`. Dans **Réglages -> Compte & sauvegarde cloud**, crée to
 compte avec pseudo + mot de passe, puis connecte-toi. La synchro se fait
 automatiquement après connexion.
 
-> Auth : dans Supabase **Authentication -> Providers**, active le provider Email
-> et désactive **Confirm email**. Summit convertit le pseudo en identifiant interne
-> invisible (`pseudo@summit.example.com`) pour utiliser Supabase Auth sans demander
-> d'e-mail à l'utilisateur.
+> Auth : Summit utilise une auth maison via RPC. Supabase Auth n'est plus affiché
+> à l'utilisateur et aucun e-mail de confirmation n'est envoyé.
 
 ## 4. Générer les clés VAPID (push)
 

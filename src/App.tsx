@@ -11,14 +11,14 @@ import { fullSync } from './lib/sync'
 
 /** Synchronise avec le cloud à la connexion puis périodiquement. */
 function SyncManager() {
-  const { user } = useAuth()
+  const { session } = useAuth()
   useEffect(() => {
-    if (!user) return
-    const run = () => fullSync(user.id).catch((e) => console.warn('Synchro échouée', e))
+    if (!session) return
+    const run = () => fullSync(session.token).catch((e) => console.warn('Synchro échouée', e))
     run()
     const id = setInterval(run, 60_000)
     return () => clearInterval(id)
-  }, [user])
+  }, [session])
   return null
 }
 

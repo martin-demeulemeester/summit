@@ -7,7 +7,7 @@ import { disablePush, enablePush, isPushEnabled } from '../lib/push'
 type AuthMode = 'signin' | 'signup'
 
 export default function CloudAccount() {
-  const { user, loading } = useAuth()
+  const { user, session, loading } = useAuth()
   const [mode, setMode] = useState<AuthMode>('signin')
   const [pseudo, setPseudo] = useState('')
   const [password, setPassword] = useState('')
@@ -63,11 +63,11 @@ export default function CloudAccount() {
   }
 
   async function handleSync() {
-    if (!user) return
+    if (!session) return
     setBusy(true)
     setMsg(null)
     try {
-      await fullSync(user.id)
+      await fullSync(session.token)
       setMsg('Synchronisation effectuée ✅')
     } catch (err) {
       setMsg(`Erreur de synchro : ${(err as Error).message}`)
@@ -77,16 +77,16 @@ export default function CloudAccount() {
   }
 
   async function handleTogglePush() {
-    if (!user) return
+    if (!session) return
     setBusy(true)
     setMsg(null)
     try {
       if (pushOn) {
-        await disablePush(user.id)
+        await disablePush(session.token)
         setPushOn(false)
         setMsg('Notifications push désactivées.')
       } else {
-        await enablePush(user.id)
+        await enablePush(session.token)
         setPushOn(true)
         setMsg('Notifications push activées 🔔')
       }
@@ -144,7 +144,7 @@ export default function CloudAccount() {
     )
   }
 
-  const displayName = user.user_metadata?.pseudo ?? 'Profil Summit'
+  const displayName = user.pseudo
 
   return (
     <Box>

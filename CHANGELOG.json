@@ -2,6 +2,18 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.6.0",
+      "date": "2026-06-14",
+      "changes": {
+        "added": [
+          "Authentification maison pseudo + mot de passe avec profils, sessions, hash Postgres et RPC"
+        ],
+        "changed": [
+          "Synchro cloud et abonnements push via RPC Summit au lieu de Supabase Auth côté utilisateur"
+        ]
+      }
+    },
+    {
       "version": "0.5.1",
       "date": "2026-06-14",
       "changes": {

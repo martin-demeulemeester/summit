@@ -2,27 +2,22 @@ import { supabase } from './supabase'
 import { db, getAllLogs, putLogRaw, putSettingsRaw } from '../db/db'
 import type { DailyLog, Settings } from '../domain/types'
 
-// --- Conversion local <-> lignes Supabase ---------------------------------
-
-interface LogRow {
-  user_id: string
+interface CloudLog {
   date: string
   tasks: DailyLog['tasks']
   sport_blocks: number
   updated_at: number
 }
 
-function logToRow(userId: string, log: DailyLog): LogRow {
-  return {
-    user_id: userId,
-    date: log.date,
-    tasks: log.tasks,
-    sport_blocks: log.sportBlocks,
-    updated_at: log.updatedAt,
+interface PullPayload {
+  settings: null | {
+    data: Omit<Settings, 'id'>
+    updated_at: number
   }
+  daily_logs: CloudLog[]
 }
 
-function rowToLog(row: LogRow): DailyLog {
+function rowToLog(row: CloudLog): DailyLog {
   return {
     date: row.date,
     tasks: row.tasks ?? {},
@@ -31,70 +26,67 @@ function rowToLog(row: LogRow): DailyLog {
   }
 }
 
-// --- Synchro des logs (last-write-wins par date) --------------------------
-
-async function syncLogs(userId: string): Promise<void> {
-  if (!supabase) return
-  const { data, error } = await supabase.from('daily_logs').select('*').eq('user_id', userId)
-  if (error) throw error
-
-  const cloud = new Map<string, DailyLog>((data ?? []).map((r) => [r.date, rowToLog(r as LogRow)]))
-  const local = new Map<string, DailyLog>((await getAllLogs()).map((l) => [l.date, l]))
-
-  const dates = new Set<string>([...cloud.keys(), ...local.keys()])
-  const toUpload: DailyLog[] = []
-
-  for (const date of dates) {
-    const l = local.get(date)
-    const c = cloud.get(date)
-    if (l && c) {
-      if (l.updatedAt > c.updatedAt) toUpload.push(l)
-      else if (c.updatedAt > l.updatedAt) await putLogRaw(c)
-    } else if (l && !c) {
-      toUpload.push(l)
-    } else if (c && !l) {
-      await putLogRaw(c)
-    }
-  }
-
-  if (toUpload.length > 0) {
-    const { error: upErr } = await supabase
-      .from('daily_logs')
-      .upsert(toUpload.map((l) => logToRow(userId, l)))
-    if (upErr) throw upErr
-  }
-}
-
-// --- Synchro des réglages (last-write-wins) -------------------------------
-
-async function syncSettings(userId: string): Promise<void> {
-  if (!supabase) return
-  const { data: row, error } = await supabase
-    .from('settings')
-    .select('*')
-    .eq('user_id', userId)
-    .maybeSingle()
-  if (error) throw error
-
-  const local = await db.settings.get('app')
-  const localUpdated = local?.updatedAt ?? 0
-  const cloudUpdated = row ? Number(row.updated_at) || 0 : -1
-
-  if (row && cloudUpdated > localUpdated) {
-    const merged: Settings = { ...(row.data as Omit<Settings, 'id'>), id: 'app', updatedAt: cloudUpdated }
-    await putSettingsRaw(merged)
-  } else if (local && localUpdated > cloudUpdated) {
-    const { id: _id, ...data } = local
-    void _id
-    const { error: upErr } = await supabase
-      .from('settings')
-      .upsert({ user_id: userId, data, updated_at: localUpdated })
-    if (upErr) throw upErr
+function logToPayload(log: DailyLog): CloudLog {
+  return {
+    date: log.date,
+    tasks: log.tasks,
+    sport_blocks: log.sportBlocks,
+    updated_at: log.updatedAt,
   }
 }
 
 /** Synchronise réglages puis logs avec le cloud. */
-export async function fullSync(userId: string): Promise<void> {
-  await syncSettings(userId)
-  await syncLogs(userId)
+export async function fullSync(sessionToken: string): Promise<void> {
+  if (!supabase) return
+
+  const { data, error } = await supabase.rpc('summit_pull', { session_token: sessionToken })
+  if (error) throw error
+
+  const payload = data as PullPayload
+  const cloudLogs = new Map<string, DailyLog>((payload.daily_logs ?? []).map((r) => [r.date, rowToLog(r)]))
+  const localLogs = new Map<string, DailyLog>((await getAllLogs()).map((l) => [l.date, l]))
+  const dates = new Set<string>([...cloudLogs.keys(), ...localLogs.keys()])
+  const logsToUpload: DailyLog[] = []
+
+  for (const date of dates) {
+    const local = localLogs.get(date)
+    const cloud = cloudLogs.get(date)
+    if (local && cloud) {
+      if (local.updatedAt > cloud.updatedAt) logsToUpload.push(local)
+      else if (cloud.updatedAt > local.updatedAt) await putLogRaw(cloud)
+    } else if (local && !cloud) {
+      logsToUpload.push(local)
+    } else if (cloud && !local) {
+      await putLogRaw(cloud)
+    }
+  }
+
+  const localSettings = await db.settings.get('app')
+  const localSettingsUpdated = localSettings?.updatedAt ?? 0
+  const cloudSettingsUpdated = payload.settings ? Number(payload.settings.updated_at) || 0 : -1
+  let settingsToUpload: Settings | null = null
+
+  if (payload.settings && cloudSettingsUpdated > localSettingsUpdated) {
+    await putSettingsRaw({ ...payload.settings.data, id: 'app', updatedAt: cloudSettingsUpdated })
+  } else if (localSettings && localSettingsUpdated > cloudSettingsUpdated) {
+    settingsToUpload = localSettings
+  }
+
+  if (settingsToUpload || logsToUpload.length > 0) {
+    const settingsData = settingsToUpload
+      ? (() => {
+          const { id: _id, ...data } = settingsToUpload
+          void _id
+          return data
+        })()
+      : null
+
+    const { error: pushError } = await supabase.rpc('summit_push', {
+      session_token: sessionToken,
+      settings_payload: settingsData,
+      settings_updated_at: settingsToUpload?.updatedAt ?? 0,
+      logs_payload: logsToUpload.map(logToPayload),
+    })
+    if (pushError) throw pushError
+  }
 }

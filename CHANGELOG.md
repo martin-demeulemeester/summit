@@ -4,6 +4,16 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.7.1] - 2026-06-14
+
+### Corrigé
+
+- Ajout d'une transition horizontale fluide lors du changement de page via la
+  navigation basse.
+- Navigation basse éclaircie pour mieux s'intégrer à la DA papier minéral.
+- Fond desktop stabilisé pour éviter la répétition topographique visible au
+  scroll.
+
 ## [0.7.0] - 2026-06-14
 
 ### Modifié

@@ -11,7 +11,7 @@ const ITEMS = [
 export default function BottomNav() {
   return (
     <nav className="safe-bottom fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md px-3 pb-2">
-      <ul className="rounded-[1.4rem] border-2 border-summit-line bg-summit-night px-2 py-2 shadow-[0_-12px_40px_rgba(31,25,19,0.18)]">
+      <ul className="rounded-[1.4rem] border-2 border-summit-line bg-summit-paper/95 px-2 py-2 shadow-[0_-10px_34px_rgba(31,25,19,0.14)] backdrop-blur">
         <div className="flex items-stretch justify-around">
           {ITEMS.map((item) => (
             <li key={item.to} className="flex-1 list-none">
@@ -21,8 +21,8 @@ export default function BottomNav() {
                 className={({ isActive }) =>
                   `flex flex-col items-center rounded-2xl py-1.5 text-[10px] font-black uppercase tracking-wide transition-transform ${
                     isActive
-                      ? 'bg-summit-accent text-summit-night shadow-[3px_3px_0_rgba(255,250,240,0.22)]'
-                      : 'text-summit-cream/62 hover:-translate-y-0.5 hover:text-summit-cream'
+                      ? 'bg-summit-accent text-summit-night shadow-[3px_3px_0_rgba(31,25,19,0.22)]'
+                      : 'text-summit-muted hover:-translate-y-0.5 hover:text-summit-ink'
                   }`
                 }
               >

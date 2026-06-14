@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
 import Today from './pages/Today'
 import Workout from './pages/Workout'
@@ -23,18 +23,22 @@ function SyncManager() {
 }
 
 export default function App() {
+  const location = useLocation()
+
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col">
       <SyncManager />
-      <main className="safe-top flex-1 px-4 pb-28 pt-5">
-        <Routes>
-          <Route path="/" element={<Today />} />
-          <Route path="/sport" element={<Workout />} />
-          <Route path="/progression" element={<Progress />} />
-          <Route path="/historique" element={<History />} />
-          <Route path="/reglages" element={<SettingsPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+      <main className="safe-top flex-1 overflow-x-hidden px-4 pb-28 pt-5">
+        <div key={location.pathname} className="summit-page-enter">
+          <Routes location={location}>
+            <Route path="/" element={<Today />} />
+            <Route path="/sport" element={<Workout />} />
+            <Route path="/progression" element={<Progress />} />
+            <Route path="/historique" element={<History />} />
+            <Route path="/reglages" element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </main>
       <BottomNav />
     </div>

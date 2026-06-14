@@ -2,6 +2,17 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.7.1",
+      "date": "2026-06-14",
+      "changes": {
+        "fixed": [
+          "Transition horizontale fluide entre pages via la navigation basse",
+          "Navigation basse éclaircie pour mieux s'intégrer à la DA papier minéral",
+          "Fond desktop stabilisé pour éviter la répétition topographique visible au scroll"
+        ]
+      }
+    },
+    {
       "version": "0.7.0",
       "date": "2026-06-14",
       "changes": {

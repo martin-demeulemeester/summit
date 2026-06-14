@@ -4,6 +4,15 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.5.0] - 2026-06-14
+
+### Modifié
+
+- Remplacement de l'authentification visible par email + mot de passe par un
+  formulaire pseudo + mot de passe.
+- Le pseudo est converti en identifiant interne Supabase invisible pour éviter
+  les e-mails de confirmation dans l'expérience utilisateur.
+
 ## [0.4.0] - 2026-06-14
 
 ### Modifié

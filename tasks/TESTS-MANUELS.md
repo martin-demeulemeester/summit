@@ -20,7 +20,7 @@
 
 ## À tester après configuration cloud (voir SETUP-CLOUD.md)
 
-- [ ] Réglages -> Compte : création de compte puis connexion email + mot de passe
+- [ ] Réglages -> Compte : création de compte puis connexion pseudo + mot de passe
 - [ ] Synchroniser maintenant -> données visibles depuis un autre navigateur/appareil
 - [ ] Activer les notifications push, puis recevoir un rappel planifié **app fermée**
 - [ ] Vérifier que seules les tâches non faites déclenchent un rappel

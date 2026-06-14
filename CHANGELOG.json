@@ -2,6 +2,16 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.5.0",
+      "date": "2026-06-14",
+      "changes": {
+        "changed": [
+          "Remplacement du formulaire email + mot de passe par un formulaire pseudo + mot de passe",
+          "Conversion du pseudo en identifiant interne Supabase invisible pour éviter les e-mails côté utilisateur"
+        ]
+      }
+    },
+    {
       "version": "0.4.0",
       "date": "2026-06-14",
       "changes": {

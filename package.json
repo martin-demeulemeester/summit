@@ -1,7 +1,7 @@
 {
   "name": "summit",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "description": "PWA de suivi de routine - Stay Strong!",
   "scripts": {

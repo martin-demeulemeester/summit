@@ -1,7 +1,7 @@
 # Summit - Suivi des tâches
 
 Projet : PWA de suivi de routine quotidienne (React + TS + Vite + Tailwind + Dexie).
-Version courante : 0.4.0
+Version courante : 0.5.0
 
 ## Fait (V1 - coeur local)
 
@@ -13,7 +13,7 @@ Version courante : 0.4.0
 
 ## Fait (V1 - cloud & notifications)
 
-- [x] Phase 4 - Cloud Supabase : client, auth email + mot de passe, tables + RLS, synchro local <-> cloud (last-write-wins)
+- [x] Phase 4 - Cloud Supabase : client, auth pseudo + mot de passe, tables + RLS, synchro local <-> cloud (last-write-wins)
 - [x] Phase 5 - Notifications push : SW injectManifest (push/click), abonnement client, Edge Function `send-reminders` + cron
 - [x] Guide d'installation `SETUP-CLOUD.md`, schéma SQL, fonction Edge
 
@@ -31,8 +31,8 @@ Version courante : 0.4.0
   - Refaire navigation, cartes, boutons et indicateurs
   - Garder la logique métier inchangée
   - Vérifier TypeScript (`tsc --noEmit`) ; build Vite à relancer hors sandbox
-- [x] Remplacer le lien magique par une connexion email + mot de passe
-  - Ajouter inscription et connexion par mot de passe dans `src/lib/auth.ts`
+- [x] Remplacer le lien magique par une connexion pseudo + mot de passe
+  - Ajouter inscription et connexion par pseudo + mot de passe dans `src/lib/auth.ts`
   - Adapter la section Compte dans les Réglages
   - Mettre à jour version, changelog et documentation
   - Vérifier avec TypeScript (`tsc --noEmit`) ; build/tests Vite à relancer hors sandbox si nécessaire

@@ -29,12 +29,13 @@ VITE_VAPID_PUBLIC_KEY=        # rempli à l'étape 5
 ```
 
 Relance `npm run dev`. Dans **Réglages -> Compte & sauvegarde cloud**, crée ton
-compte avec email + mot de passe, puis connecte-toi. La synchro se fait
+compte avec pseudo + mot de passe, puis connecte-toi. La synchro se fait
 automatiquement après connexion.
 
-> Auth e-mail : dans Supabase **Authentication -> Providers**, active le provider
-> Email. Si la confirmation d'e-mail est activée, ajoute l'URL de l'app dans
-> **URL Configuration -> Redirect URLs**.
+> Auth : dans Supabase **Authentication -> Providers**, active le provider Email
+> et désactive **Confirm email**. Summit convertit le pseudo en identifiant interne
+> invisible (`pseudo@summit.local`) pour utiliser Supabase Auth sans demander
+> d'e-mail à l'utilisateur.
 
 ## 4. Générer les clés VAPID (push)
 

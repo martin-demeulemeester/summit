@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
-import { useAuth, signInWithPassword, signOut, signUpWithPassword } from '../lib/auth'
+import { useAuth, signInWithPseudo, signOut, signUpWithPseudo } from '../lib/auth'
 import { isCloudConfigured, isPushConfigured } from '../lib/supabase'
 import { fullSync } from '../lib/sync'
 import { disablePush, enablePush, isPushEnabled } from '../lib/push'
@@ -9,7 +9,7 @@ type AuthMode = 'signin' | 'signup'
 export default function CloudAccount() {
   const { user, loading } = useAuth()
   const [mode, setMode] = useState<AuthMode>('signin')
-  const [email, setEmail] = useState('')
+  const [pseudo, setPseudo] = useState('')
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -49,15 +49,11 @@ export default function CloudAccount() {
     setMsg(null)
     try {
       if (mode === 'signin') {
-        await signInWithPassword(email, password)
+        await signInWithPseudo(pseudo, password)
         setMsg('Connexion réussie ✅')
       } else {
-        const { needsConfirmation } = await signUpWithPassword(email, password)
-        setMsg(
-          needsConfirmation
-            ? 'Compte créé. Vérifie ton e-mail pour confirmer ton adresse, puis reconnecte-toi.'
-            : 'Compte créé et connecté ✅',
-        )
+        await signUpWithPseudo(pseudo, password)
+        setMsg('Compte créé ✅')
       }
     } catch (err) {
       setMsg(`Erreur : ${(err as Error).message}`)
@@ -114,14 +110,16 @@ export default function CloudAccount() {
         </div>
         <form onSubmit={handleSignIn} className="space-y-2">
           <label className="block text-sm font-semibold text-summit-ink">
-            {mode === 'signin' ? 'Se connecter' : 'Créer un compte'}
+            {mode === 'signin' ? 'Se connecter' : 'Créer ton compte'}
           </label>
           <input
-            type="email"
+            type="text"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="ton@email.fr"
+            minLength={2}
+            value={pseudo}
+            onChange={(e) => setPseudo(e.target.value)}
+            placeholder="Pseudo"
+            autoComplete="username"
             className="w-full rounded-xl border border-summit-line bg-white px-3 py-2 text-sm text-summit-ink outline-none focus:border-summit-accent"
           />
           <input
@@ -131,20 +129,26 @@ export default function CloudAccount() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mot de passe"
+            autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
             className="w-full rounded-xl border border-summit-line bg-white px-3 py-2 text-sm text-summit-ink outline-none focus:border-summit-accent"
           />
           <button type="submit" disabled={busy} className="w-full aura-button-primary py-2.5 text-sm">
             {busy ? 'Patiente...' : mode === 'signin' ? 'Se connecter' : 'Créer le compte'}
           </button>
         </form>
+        <p className="mt-2 text-xs text-summit-muted">
+          Aucun e-mail requis. Pense à garder ton mot de passe : il n'y a pas de récupération par mail.
+        </p>
         {msg && <p className="mt-2 text-xs font-medium text-summit-muted">{msg}</p>}
       </Box>
     )
   }
 
+  const displayName = user.user_metadata?.pseudo ?? 'Profil Summit'
+
   return (
     <Box>
-      <p className="text-sm font-semibold text-summit-ink">Connecté : {user.email}</p>
+      <p className="text-sm font-semibold text-summit-ink">Connecté : {displayName}</p>
       <div className="mt-3 space-y-2">
         <button onClick={handleSync} disabled={busy} className="w-full aura-button-secondary py-2.5 text-sm">
           Synchroniser maintenant
@@ -180,9 +184,7 @@ function ModeButton({ active, onClick, children }: { active: boolean; onClick: (
   return (
     <button
       type="button"
-      onClick={() => {
-        onClick()
-      }}
+      onClick={onClick}
       className={`rounded-lg py-2 ${active ? 'bg-summit-accent text-white' : 'text-summit-muted'}`}
     >
       {children}

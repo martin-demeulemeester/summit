@@ -25,26 +25,46 @@ export function useAuth(): { user: User | null; loading: boolean } {
   return { user, loading }
 }
 
-/** Connexion avec email + mot de passe. */
-export async function signInWithPassword(email: string, password: string): Promise<void> {
+/** Transforme un pseudo en identifiant e-mail interne pour Supabase. */
+function pseudoToInternalEmail(pseudo: string): string {
+  const normalized = pseudo
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9_-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+
+  if (normalized.length < 2) {
+    throw new Error('Le pseudo doit contenir au moins 2 caractères.')
+  }
+
+  return `${normalized}@summit.local`
+}
+
+/** Connexion avec pseudo + mot de passe. */
+export async function signInWithPseudo(pseudo: string, password: string): Promise<void> {
   if (!supabase) throw new Error('Cloud non configuré')
   const { error } = await supabase.auth.signInWithPassword({
-    email,
+    email: pseudoToInternalEmail(pseudo),
     password,
   })
   if (error) throw error
 }
 
-/** Création de compte avec email + mot de passe. */
-export async function signUpWithPassword(email: string, password: string): Promise<{ needsConfirmation: boolean }> {
+/** Création de compte avec pseudo + mot de passe. */
+export async function signUpWithPseudo(pseudo: string, password: string): Promise<void> {
   if (!supabase) throw new Error('Cloud non configuré')
-  const { data, error } = await supabase.auth.signUp({
-    email,
+  const cleanPseudo = pseudo.trim()
+  const { error } = await supabase.auth.signUp({
+    email: pseudoToInternalEmail(cleanPseudo),
     password,
-    options: { emailRedirectTo: window.location.origin },
+    options: {
+      data: { pseudo: cleanPseudo },
+    },
   })
   if (error) throw error
-  return { needsConfirmation: !data.session }
 }
 
 /** Déconnexion. */

@@ -1,7 +1,7 @@
 # Summit - Suivi des tâches
 
 Projet : PWA de suivi de routine quotidienne (React + TS + Vite + Tailwind + Dexie).
-Version courante : 0.6.0
+Version courante : 0.7.0
 
 ## Fait (V1 - coeur local)
 
@@ -31,6 +31,10 @@ Version courante : 0.6.0
   - Refaire navigation, cartes, boutons et indicateurs
   - Garder la logique métier inchangée
   - Vérifier TypeScript (`tsc --noEmit`) ; build Vite à relancer hors sandbox
+- [x] Direction artistique finale « Rituel topographique »
+  - Palette papier minéral, encre profonde, orange signal, vert lichen
+  - Fond à grille topographique et composants print premium
+  - Refonte accueil, navigation, streak, progression et sport
 - [x] Remplacer le lien magique par une connexion pseudo + mot de passe
   - Ajouter inscription et connexion par pseudo + mot de passe dans `src/lib/auth.ts`
   - Adapter la section Compte dans les Réglages

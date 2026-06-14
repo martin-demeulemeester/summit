@@ -4,6 +4,31 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.7.0] - 2026-06-14
+
+### Modifié
+
+- Nouvelle direction artistique « Rituel topographique » : fond papier minéral,
+  motifs cartographiques, encre profonde, orange signal et vert lichen.
+- Refonte des composants clés : hero d'accueil, cartes de tâches, navigation,
+  bandeau de série, barres de progression et écrans Sport/Progression.
+
+## [0.6.2] - 2026-06-14
+
+### Corrigé
+
+- Correction complète des appels `pgcrypto` : appels explicites à
+  `extensions.gen_random_uuid`, `extensions.gen_random_bytes`,
+  `extensions.gen_salt` et `extensions.crypt`.
+
+## [0.6.1] - 2026-06-14
+
+### Corrigé
+
+- Correction de l'auth maison sur Supabase : appel explicite à
+  `extensions.crypt` et `extensions.gen_salt` pour fonctionner avec le schéma
+  `extensions`.
+
 ## [0.6.0] - 2026-06-14
 
 ### Ajouté

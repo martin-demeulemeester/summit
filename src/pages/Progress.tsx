@@ -42,8 +42,9 @@ export default function Progress() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-extrabold text-summit-ink">Progression</h1>
-        <p className="text-sm text-summit-muted">Tes cibles évoluent quand tu enchaînes les jours.</p>
+        <p className="summit-label">Mesure d'altitude</p>
+        <h1 className="font-display text-4xl font-black text-summit-ink">Progression</h1>
+        <p className="text-sm font-medium text-summit-muted">Les paliers montent quand les jours s'empilent.</p>
       </header>
 
       <section className="space-y-3">
@@ -53,13 +54,13 @@ export default function Progress() {
           return (
             <div key={p.exerciseId} className="aura-card p-4">
               <div className="mb-2 flex items-center justify-between">
-                <span className="flex items-center gap-2 font-bold text-summit-ink">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-summit-bg text-xl">
+                <span className="flex items-center gap-2 font-black uppercase tracking-wide text-summit-ink">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl border-2 border-summit-line bg-summit-paper text-xl">
                     {def.emoji}
                   </span>
                   {def.label}
                 </span>
-                <span className="text-lg font-extrabold text-summit-accent">
+                <span className="rounded-full bg-summit-night px-2 py-0.5 text-sm font-black text-summit-cream">
                   {p.currentTarget} {unit}
                 </span>
               </div>
@@ -93,24 +94,24 @@ export default function Progress() {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-summit-muted">14 derniers jours</h2>
+        <h2 className="summit-label mb-3">14 derniers jours</h2>
         <div className="aura-card p-3">
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e7ddf7" vertical={false} />
-              <XAxis dataKey="label" tick={{ fill: '#776b86', fontSize: 10 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="4 6" stroke="#e4dbc8" vertical={false} />
+              <XAxis dataKey="label" tick={{ fill: '#786e60', fontSize: 10, fontWeight: 800 }} axisLine={false} tickLine={false} />
               <YAxis
                 domain={[0, TOTAL_DAILY_ITEMS]}
-                tick={{ fill: '#776b86', fontSize: 10 }}
+                tick={{ fill: '#786e60', fontSize: 10, fontWeight: 800 }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
-                contentStyle={{ background: '#ffffff', border: '1px solid #ddd2ef', borderRadius: 12, color: '#241344' }}
-                labelStyle={{ color: '#776b86' }}
+                contentStyle={{ background: '#fffaf0', border: '2px solid #231a12', borderRadius: 14, color: '#1f1913' }}
+                labelStyle={{ color: '#786e60', fontWeight: 800 }}
                 formatter={(v: number) => [`${v} / ${TOTAL_DAILY_ITEMS}`, 'Complété']}
               />
-              <Bar dataKey="done" fill="#7c3aed" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="done" fill="#ff5a1f" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

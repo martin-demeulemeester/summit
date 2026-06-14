@@ -62,12 +62,10 @@ export default function Workout() {
     <div className="space-y-5">
       <header className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-semibold text-summit-muted">
-            Bloc {blocksDone + 1} / {SPORT_BLOCKS_PER_DAY} · étape {index + 1} / {STEPS.length}
-          </p>
-          <h1 className="text-3xl font-extrabold text-summit-ink">Séance sport</h1>
+          <p className="summit-label">Bloc {blocksDone + 1} / {SPORT_BLOCKS_PER_DAY} · étape {index + 1} / {STEPS.length}</p>
+          <h1 className="font-display text-4xl font-black text-summit-ink">Séance sport</h1>
         </div>
-        <button onClick={() => navigate('/')} className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-summit-muted shadow-sm">
+        <button onClick={() => navigate('/')} className="rounded-full border-2 border-summit-line bg-summit-surface px-3 py-1.5 text-sm font-black text-summit-ink shadow-[3px_3px_0_rgba(31,25,19,0.14)]">
           Quitter
         </button>
       </header>
@@ -87,7 +85,7 @@ function StepProgress({ index, total }: { index: number; total: number }) {
       {Array.from({ length: total }).map((_, i) => (
         <div
           key={i}
-          className={`h-2 flex-1 rounded-full ${i <= index ? 'bg-summit-accent' : 'bg-summit-surface2/80'}`}
+          className={`h-3 flex-1 rounded-full border border-summit-line ${i <= index ? 'bg-summit-accent' : 'bg-summit-surface2/80'}`}
         />
       ))}
     </div>
@@ -107,10 +105,10 @@ function RepsStep({
   const target = settings.targets[ex]
   return (
     <div className="aura-card flex flex-col items-center p-8 text-center">
-      <span className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-summit-bg text-6xl">{def.emoji}</span>
-      <h2 className="mt-5 text-xl font-extrabold text-summit-ink">{def.label}</h2>
-      <p className="mt-2 text-6xl font-extrabold text-summit-accent">{target}</p>
-      <p className="text-sm font-medium text-summit-muted">répétitions ou ta progression</p>
+      <span className="flex h-24 w-24 rotate-[-3deg] items-center justify-center rounded-[2rem] border-2 border-summit-line bg-summit-paper text-6xl shadow-[5px_5px_0_rgba(31,25,19,0.12)]">{def.emoji}</span>
+      <h2 className="mt-5 text-xl font-black uppercase tracking-wide text-summit-ink">{def.label}</h2>
+      <p className="mt-2 font-display text-7xl font-black leading-none text-summit-accent">{target}</p>
+      <p className="summit-label">répétitions ou progression</p>
       <button onClick={onDone} className="mt-8 w-full aura-button-primary">
         C'est fait
       </button>
@@ -122,9 +120,9 @@ function RestStep({ onDone }: { onDone: () => void }) {
   const remaining = useCountdown(REST_SECONDS, onDone)
   return (
     <div className="aura-card flex flex-col items-center bg-summit-cream p-8 text-center">
-      <span className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white text-6xl">⏱️</span>
-      <h2 className="mt-5 text-xl font-extrabold text-summit-ink">Repos</h2>
-      <p className="mt-2 font-mono text-6xl font-extrabold text-summit-warn">{formatDuration(remaining)}</p>
+      <span className="flex h-24 w-24 rotate-2 items-center justify-center rounded-[2rem] border-2 border-summit-line bg-summit-surface text-6xl shadow-[5px_5px_0_rgba(31,25,19,0.12)]">⏱️</span>
+      <h2 className="mt-5 text-xl font-black uppercase tracking-wide text-summit-ink">Repos</h2>
+      <p className="mt-2 font-mono text-6xl font-black text-summit-warn">{formatDuration(remaining)}</p>
       <button onClick={onDone} className="mt-8 w-full aura-button-secondary">
         Passer le repos
       </button>
@@ -147,12 +145,12 @@ function HoldStep({
 
   return (
     <div className="aura-card flex flex-col items-center p-8 text-center">
-      <span className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-summit-bg text-6xl">{def.emoji}</span>
-      <h2 className="mt-5 text-xl font-extrabold text-summit-ink">{def.label}</h2>
+      <span className="flex h-24 w-24 rotate-[-3deg] items-center justify-center rounded-[2rem] border-2 border-summit-line bg-summit-paper text-6xl shadow-[5px_5px_0_rgba(31,25,19,0.12)]">{def.emoji}</span>
+      <h2 className="mt-5 text-xl font-black uppercase tracking-wide text-summit-ink">{def.label}</h2>
       {!started ? (
         <>
-          <p className="mt-2 text-6xl font-extrabold text-summit-accent">{formatDuration(target)}</p>
-          <p className="text-sm font-medium text-summit-muted">à tenir ou ta progression</p>
+          <p className="mt-2 font-mono text-6xl font-black text-summit-accent">{formatDuration(target)}</p>
+          <p className="summit-label">à tenir ou progression</p>
           <button onClick={() => setStarted(true)} className="mt-8 w-full aura-button-primary">
             Démarrer le gainage
           </button>

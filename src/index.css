@@ -15,19 +15,35 @@ body,
 body {
   margin: 0;
   background:
-    linear-gradient(180deg, #f3edff 0%, #f8f4ff 36%, #fff8ee 100%);
+    radial-gradient(circle at 12% 8%, rgba(255, 90, 31, 0.16), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(85, 107, 47, 0.18), transparent 24rem),
+    linear-gradient(180deg, #f4efe3 0%, #fffaf0 52%, #efe4d0 100%);
   color: theme('colors.summit.ink');
   font-family: theme('fontFamily.sans');
   -webkit-font-smoothing: antialiased;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(rgba(31, 25, 19, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 25, 19, 0.035) 1px, transparent 1px),
+    radial-gradient(ellipse at 50% 20%, transparent 0 36%, rgba(31, 25, 19, 0.05) 36.2% 36.8%, transparent 37% 100%);
+  background-size: 28px 28px, 28px 28px, 340px 180px;
+  mix-blend-mode: multiply;
+}
+
 @layer components {
   .aura-card {
-    @apply rounded-2xl border border-summit-line/80 bg-summit-surface shadow-[0_16px_44px_rgba(57,31,91,0.10)];
+    @apply rounded-[1.6rem] border-2 border-summit-line bg-summit-surface shadow-[8px_8px_0_rgba(31,25,19,0.14)];
   }
 
   .aura-card-soft {
-    @apply rounded-2xl border border-summit-line/70 bg-white/70 shadow-[0_12px_32px_rgba(57,31,91,0.08)] backdrop-blur;
+    @apply rounded-[1.4rem] border border-summit-line/35 bg-summit-paper/85 shadow-[0_18px_42px_rgba(31,25,19,0.10)] backdrop-blur;
   }
 
   .aura-title {
@@ -39,11 +55,19 @@ body {
   }
 
   .aura-button-primary {
-    @apply rounded-xl bg-summit-accent py-3 font-semibold text-white shadow-[0_10px_24px_rgba(124,58,237,0.22)] transition-opacity hover:opacity-90 disabled:opacity-50;
+    @apply rounded-2xl border-2 border-summit-line bg-summit-accent py-3 font-black uppercase tracking-wide text-summit-night shadow-[5px_5px_0_rgba(31,25,19,0.22)] transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50;
   }
 
   .aura-button-secondary {
-    @apply rounded-xl border border-summit-line bg-white py-3 font-semibold text-summit-ink transition-colors hover:bg-summit-bg disabled:opacity-50;
+    @apply rounded-2xl border-2 border-summit-line bg-summit-surface py-3 font-black uppercase tracking-wide text-summit-ink transition-transform hover:-translate-y-0.5 disabled:opacity-50;
+  }
+
+  .summit-label {
+    @apply text-[11px] font-black uppercase tracking-[0.18em] text-summit-muted;
+  }
+
+  .summit-marker {
+    @apply inline-flex rounded-full border-2 border-summit-line bg-summit-night px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-summit-cream;
   }
 }
 

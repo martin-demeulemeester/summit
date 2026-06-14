@@ -1,7 +1,7 @@
 -- Summit - auth maison pseudo + mot de passe
 -- À exécuter après 0001_init.sql.
 
-create extension if not exists pgcrypto;
+create extension if not exists pgcrypto with schema extensions;
 
 -- Les données Summit utilisent désormais un profil maison, pas auth.users.
 alter table public.daily_logs drop constraint if exists daily_logs_user_id_fkey;
@@ -9,7 +9,7 @@ alter table public.settings drop constraint if exists settings_user_id_fkey;
 alter table public.push_subscriptions drop constraint if exists push_subscriptions_user_id_fkey;
 
 create table if not exists public.summit_profiles (
-  id uuid primary key default gen_random_uuid(),
+  id uuid primary key default extensions.gen_random_uuid(),
   pseudo text not null unique,
   display_pseudo text not null,
   password_hash text not null,
@@ -57,7 +57,7 @@ as $$
 declare
   new_token text;
 begin
-  new_token := encode(gen_random_bytes(32), 'hex');
+  new_token := encode(extensions.gen_random_bytes(32), 'hex');
   insert into public.summit_sessions (token, profile_id)
   values (new_token, profile);
   return new_token;
@@ -86,7 +86,7 @@ begin
   end if;
 
   insert into public.summit_profiles (pseudo, display_pseudo, password_hash)
-  values (normalized, trim(raw_pseudo), crypt(raw_password, gen_salt('bf')))
+  values (normalized, trim(raw_pseudo), extensions.crypt(raw_password, extensions.gen_salt('bf')))
   returning id into profile_id;
 
   session_token := public.summit_start_session(profile_id);
@@ -120,7 +120,7 @@ begin
   where pseudo = normalized
   limit 1;
 
-  if not found or profile.password_hash <> crypt(raw_password, profile.password_hash) then
+  if not found or profile.password_hash <> extensions.crypt(raw_password, profile.password_hash) then
     raise exception 'Pseudo ou mot de passe incorrect';
   end if;
 

@@ -2,6 +2,25 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.7.0",
+      "date": "2026-06-14",
+      "changes": {
+        "changed": [
+          "Nouvelle direction artistique Rituel topographique : fond papier minéral, motifs cartographiques, encre profonde, orange signal et vert lichen",
+          "Refonte des composants clés : hero d'accueil, cartes de tâches, navigation, bandeau de série, barres de progression et écrans Sport/Progression"
+        ]
+      }
+    },
+    {
+      "version": "0.6.1",
+      "date": "2026-06-14",
+      "changes": {
+        "fixed": [
+          "Correction complète des appels pgcrypto avec le schéma extensions : gen_random_uuid, gen_random_bytes, gen_salt et crypt"
+        ]
+      }
+    },
+    {
       "version": "0.6.0",
       "date": "2026-06-14",
       "changes": {

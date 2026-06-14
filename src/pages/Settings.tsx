@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useSettings } from '../db/hooks'
 import { resetAll, saveSettings } from '../db/db'
 import { DAILY_TASKS, EXERCISES, exerciseById, type ExerciseId, type TaskId } from '../domain/routine'
@@ -13,7 +13,7 @@ export default function SettingsPage() {
   )
 
   if (!settings) {
-    return <div className="flex h-64 items-center justify-center text-slate-500">Chargement…</div>
+    return <div className="flex h-64 items-center justify-center text-summit-muted">Chargement...</div>
   }
 
   async function patch(update: Partial<Settings>) {
@@ -52,49 +52,33 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold text-white">Réglages</h1>
+        <h1 className="text-3xl font-extrabold text-summit-ink">Réglages</h1>
       </header>
 
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Compte &amp; sauvegarde cloud
-        </h2>
+      <Section title="Compte & sauvegarde cloud">
         <CloudAccount />
-      </section>
+      </Section>
 
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Notifications locales
-        </h2>
-        <div className="rounded-xl border border-summit-surface2/60 bg-summit-surface p-4">
+      <Section title="Notifications locales">
+        <div className="aura-card p-4">
           {notifPerm === 'granted' ? (
-            <p className="text-sm text-summit-success">✅ Notifications autorisées sur cet appareil.</p>
+            <p className="text-sm font-semibold text-summit-success">✅ Notifications autorisées sur cet appareil.</p>
           ) : (
-            <button
-              onClick={requestNotifications}
-              className="w-full rounded-lg bg-summit-accent py-2.5 text-sm font-semibold text-summit-bg"
-            >
+            <button onClick={requestNotifications} className="w-full aura-button-primary py-2.5 text-sm">
               Autoriser les notifications
             </button>
           )}
-          <p className="mt-2 text-xs text-slate-500">
-            Les rappels planifiés (même appli fermée) seront activés avec la synchro cloud (Web
-            Push). Pour l'instant, l'app peut notifier quand elle est ouverte.
+          <p className="mt-2 text-xs text-summit-muted">
+            Les rappels planifiés même appli fermée passent par la sauvegarde cloud et Web Push.
           </p>
         </div>
-      </section>
+      </Section>
 
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Heures de rappel
-        </h2>
+      <Section title="Heures de rappel">
         <div className="space-y-2">
           {DAILY_TASKS.map((task) => (
-            <div
-              key={task.id}
-              className="flex items-center justify-between rounded-xl border border-summit-surface2/60 bg-summit-surface p-3"
-            >
-              <span className="flex items-center gap-2 text-sm text-white">
+            <div key={task.id} className="aura-card-soft flex items-center justify-between p-3">
+              <span className="flex items-center gap-2 text-sm font-semibold text-summit-ink">
                 <span className="text-xl">{task.emoji}</span>
                 {task.label}
               </span>
@@ -102,75 +86,67 @@ export default function SettingsPage() {
                 type="time"
                 value={settings.reminders.times[task.id] ?? task.defaultReminder}
                 onChange={(e) => setReminderTime(task.id, e.target.value)}
-                className="rounded-lg bg-summit-bg px-2 py-1 text-sm text-white [color-scheme:dark]"
+                className="rounded-xl border border-summit-line bg-white px-2 py-1 text-sm font-semibold text-summit-ink"
               />
             </div>
           ))}
-          <div className="flex items-center justify-between rounded-xl border border-summit-surface2/60 bg-summit-surface p-3">
-            <span className="flex items-center gap-2 text-sm text-white">
+          <div className="aura-card-soft flex items-center justify-between p-3">
+            <span className="flex items-center gap-2 text-sm font-semibold text-summit-ink">
               <span className="text-xl">💪</span>
-              Relance sport (fin de journée)
+              Relance sport
             </span>
             <input
               type="time"
               value={settings.reminders.sportEndOfDay}
-              onChange={(e) =>
-                patch({ reminders: { ...settings.reminders, sportEndOfDay: e.target.value } })
-              }
-              className="rounded-lg bg-summit-bg px-2 py-1 text-sm text-white [color-scheme:dark]"
+              onChange={(e) => patch({ reminders: { ...settings.reminders, sportEndOfDay: e.target.value } })}
+              className="rounded-xl border border-summit-line bg-white px-2 py-1 text-sm font-semibold text-summit-ink"
             />
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Cibles actuelles
-        </h2>
+      <Section title="Cibles actuelles">
         <div className="space-y-2">
           {EXERCISES.map((ex) => (
-            <div
-              key={ex.id}
-              className="flex items-center justify-between rounded-xl border border-summit-surface2/60 bg-summit-surface p-3"
-            >
-              <span className="flex items-center gap-2 text-sm text-white">
+            <div key={ex.id} className="aura-card-soft flex items-center justify-between p-3">
+              <span className="flex items-center gap-2 text-sm font-semibold text-summit-ink">
                 <span className="text-xl">{ex.emoji}</span>
                 {ex.label}
               </span>
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setTarget(ex.id, -ex.increment)}
-                  className="h-8 w-8 rounded-lg bg-summit-surface2 text-lg font-bold text-white"
-                >
-                  −
+                <button onClick={() => setTarget(ex.id, -ex.increment)} className="h-8 w-8 rounded-xl bg-white text-lg font-bold text-summit-accent shadow-sm">
+                  -
                 </button>
-                <span className="w-16 text-center font-bold text-summit-accent">
+                <span className="w-16 text-center font-extrabold text-summit-accent">
                   {settings.targets[ex.id]} {ex.unit === 'reps' ? 'reps' : 's'}
                 </span>
-                <button
-                  onClick={() => setTarget(ex.id, ex.increment)}
-                  className="h-8 w-8 rounded-lg bg-summit-surface2 text-lg font-bold text-white"
-                >
+                <button onClick={() => setTarget(ex.id, ex.increment)} className="h-8 w-8 rounded-xl bg-white text-lg font-bold text-summit-accent shadow-sm">
                   +
                 </button>
               </div>
             </div>
           ))}
         </div>
-      </section>
+      </Section>
 
       <section>
-        <button
-          onClick={handleReset}
-          className="w-full rounded-xl border border-summit-danger/40 py-3 text-sm font-semibold text-summit-danger"
-        >
+        <button onClick={handleReset} className="w-full rounded-2xl border border-summit-danger/30 bg-white py-3 text-sm font-semibold text-summit-danger">
           Réinitialiser toutes les données
         </button>
       </section>
 
-      <footer className="pt-2 text-center text-xs text-slate-600">
+      <footer className="pt-2 text-center text-xs font-medium text-summit-muted">
         Summit v{APP_VERSION} · Stay Strong!
       </footer>
     </div>
+  )
+}
+
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section>
+      <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-summit-muted">{title}</h2>
+      {children}
+    </section>
   )
 }

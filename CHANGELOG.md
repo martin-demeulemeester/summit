@@ -4,6 +4,15 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.4.0] - 2026-06-14
+
+### Modifié
+
+- Refonte de la direction artistique : thème clair pastel, accent violet, cartes
+  blanches arrondies et navigation flottante inspirée de la sobriété d'Aura.
+- Harmonisation visuelle des écrans Aujourd'hui, Sport, Progression, Historique
+  et Réglages.
+
 ## [0.3.0] - 2026-06-14
 
 ### Modifié

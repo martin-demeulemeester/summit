@@ -34,7 +34,7 @@ export default function Workout() {
   const [finished, setFinished] = useState(false)
 
   if (!settings || !log) {
-    return <div className="flex h-64 items-center justify-center text-slate-500">Chargement…</div>
+    return <div className="flex h-64 items-center justify-center text-summit-muted">Chargement...</div>
   }
 
   const blocksDone = Math.min(log.sportBlocks ?? 0, SPORT_BLOCKS_PER_DAY)
@@ -60,14 +60,14 @@ export default function Workout() {
 
   return (
     <div className="space-y-5">
-      <header className="flex items-center justify-between">
+      <header className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Séance sport</h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm font-semibold text-summit-muted">
             Bloc {blocksDone + 1} / {SPORT_BLOCKS_PER_DAY} · étape {index + 1} / {STEPS.length}
           </p>
+          <h1 className="text-3xl font-extrabold text-summit-ink">Séance sport</h1>
         </div>
-        <button onClick={() => navigate('/')} className="text-sm text-slate-400 hover:text-slate-200">
+        <button onClick={() => navigate('/')} className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-summit-muted shadow-sm">
           Quitter
         </button>
       </header>
@@ -87,7 +87,7 @@ function StepProgress({ index, total }: { index: number; total: number }) {
       {Array.from({ length: total }).map((_, i) => (
         <div
           key={i}
-          className={`h-1.5 flex-1 rounded-full ${i <= index ? 'bg-summit-accent' : 'bg-summit-surface2'}`}
+          className={`h-2 flex-1 rounded-full ${i <= index ? 'bg-summit-accent' : 'bg-summit-surface2/80'}`}
         />
       ))}
     </div>
@@ -106,16 +106,13 @@ function RepsStep({
   const def = exerciseById(ex)
   const target = settings.targets[ex]
   return (
-    <div className="flex flex-col items-center rounded-2xl bg-summit-surface p-8 text-center">
-      <span className="text-6xl">{def.emoji}</span>
-      <h2 className="mt-4 text-xl font-semibold text-white">{def.label}</h2>
-      <p className="mt-2 text-5xl font-bold text-summit-accent">{target}</p>
-      <p className="text-sm text-slate-400">répétitions (ou ta progression)</p>
-      <button
-        onClick={onDone}
-        className="mt-8 w-full rounded-xl bg-summit-accent py-3 font-semibold text-summit-bg transition-opacity hover:opacity-90"
-      >
-        C'est fait ✅
+    <div className="aura-card flex flex-col items-center p-8 text-center">
+      <span className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-summit-bg text-6xl">{def.emoji}</span>
+      <h2 className="mt-5 text-xl font-extrabold text-summit-ink">{def.label}</h2>
+      <p className="mt-2 text-6xl font-extrabold text-summit-accent">{target}</p>
+      <p className="text-sm font-medium text-summit-muted">répétitions ou ta progression</p>
+      <button onClick={onDone} className="mt-8 w-full aura-button-primary">
+        C'est fait
       </button>
     </div>
   )
@@ -124,14 +121,11 @@ function RepsStep({
 function RestStep({ onDone }: { onDone: () => void }) {
   const remaining = useCountdown(REST_SECONDS, onDone)
   return (
-    <div className="flex flex-col items-center rounded-2xl bg-summit-surface p-8 text-center">
-      <span className="text-6xl">⏱️</span>
-      <h2 className="mt-4 text-xl font-semibold text-white">Repos</h2>
-      <p className="mt-2 font-mono text-6xl font-bold text-summit-warn">{formatDuration(remaining)}</p>
-      <button
-        onClick={onDone}
-        className="mt-8 w-full rounded-xl bg-summit-surface2 py-3 font-semibold text-white transition-opacity hover:opacity-90"
-      >
+    <div className="aura-card flex flex-col items-center bg-summit-cream p-8 text-center">
+      <span className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white text-6xl">⏱️</span>
+      <h2 className="mt-5 text-xl font-extrabold text-summit-ink">Repos</h2>
+      <p className="mt-2 font-mono text-6xl font-extrabold text-summit-warn">{formatDuration(remaining)}</p>
+      <button onClick={onDone} className="mt-8 w-full aura-button-secondary">
         Passer le repos
       </button>
     </div>
@@ -152,17 +146,14 @@ function HoldStep({
   const [started, setStarted] = useState(false)
 
   return (
-    <div className="flex flex-col items-center rounded-2xl bg-summit-surface p-8 text-center">
-      <span className="text-6xl">{def.emoji}</span>
-      <h2 className="mt-4 text-xl font-semibold text-white">{def.label}</h2>
+    <div className="aura-card flex flex-col items-center p-8 text-center">
+      <span className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-summit-bg text-6xl">{def.emoji}</span>
+      <h2 className="mt-5 text-xl font-extrabold text-summit-ink">{def.label}</h2>
       {!started ? (
         <>
-          <p className="mt-2 text-5xl font-bold text-summit-accent">{formatDuration(target)}</p>
-          <p className="text-sm text-slate-400">à tenir (ou ta progression)</p>
-          <button
-            onClick={() => setStarted(true)}
-            className="mt-8 w-full rounded-xl bg-summit-accent py-3 font-semibold text-summit-bg transition-opacity hover:opacity-90"
-          >
+          <p className="mt-2 text-6xl font-extrabold text-summit-accent">{formatDuration(target)}</p>
+          <p className="text-sm font-medium text-summit-muted">à tenir ou ta progression</p>
+          <button onClick={() => setStarted(true)} className="mt-8 w-full aura-button-primary">
             Démarrer le gainage
           </button>
         </>
@@ -177,12 +168,9 @@ function HoldTimer({ seconds, onDone }: { seconds: number; onDone: () => void })
   const remaining = useCountdown(seconds, onDone)
   return (
     <>
-      <p className="mt-2 font-mono text-6xl font-bold text-summit-success">{formatDuration(remaining)}</p>
-      <p className="text-sm text-slate-400">Tiens la position 🪵</p>
-      <button
-        onClick={onDone}
-        className="mt-8 w-full rounded-xl bg-summit-surface2 py-3 font-semibold text-white transition-opacity hover:opacity-90"
-      >
+      <p className="mt-2 font-mono text-6xl font-extrabold text-summit-success">{formatDuration(remaining)}</p>
+      <p className="text-sm font-medium text-summit-muted">Tiens la position 🪵</p>
+      <button onClick={onDone} className="mt-8 w-full aura-button-secondary">
         Terminer
       </button>
     </>
@@ -192,19 +180,16 @@ function HoldTimer({ seconds, onDone }: { seconds: number; onDone: () => void })
 function BlockDone({ blocksDone, onClose }: { blocksDone: number; onClose: () => void }) {
   const allDone = blocksDone >= SPORT_BLOCKS_PER_DAY
   return (
-    <div className="flex flex-col items-center rounded-2xl bg-summit-surface p-8 text-center">
+    <div className="aura-card flex flex-col items-center p-8 text-center">
       <span className="text-6xl">{allDone ? '🏔️' : '🔥'}</span>
-      <h2 className="mt-4 text-2xl font-bold text-white">Bloc terminé !</h2>
-      <p className="mt-2 text-slate-300">
+      <h2 className="mt-4 text-2xl font-extrabold text-summit-ink">Bloc terminé !</h2>
+      <p className="mt-2 text-summit-muted">
         {blocksDone} / {SPORT_BLOCKS_PER_DAY} blocs aujourd'hui
       </p>
       <p className="mt-1 font-semibold text-summit-accent">
         {allDone ? 'Tous les blocs sont faits. Stay Strong!' : 'Stay Strong!'}
       </p>
-      <button
-        onClick={onClose}
-        className="mt-8 w-full rounded-xl bg-summit-accent py-3 font-semibold text-summit-bg transition-opacity hover:opacity-90"
-      >
+      <button onClick={onClose} className="mt-8 w-full aura-button-primary">
         Retour à l'accueil
       </button>
     </div>

@@ -22,11 +22,10 @@ export default function CloudAccount() {
   if (!isCloudConfigured) {
     return (
       <Box>
-        <p className="text-sm text-slate-300">☁️ Cloud non configuré.</p>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="text-sm font-semibold text-summit-ink">☁️ Cloud non configuré.</p>
+        <p className="mt-1 text-xs text-summit-muted">
           Renseigne <code>VITE_SUPABASE_URL</code> et <code>VITE_SUPABASE_ANON_KEY</code> dans
-          <code> .env.local</code> (voir <code>SETUP-CLOUD.md</code>) pour activer la sauvegarde
-          et les rappels planifiés.
+          <code> .env.local</code> pour activer la sauvegarde et les rappels planifiés.
         </p>
       </Box>
     )
@@ -35,7 +34,7 @@ export default function CloudAccount() {
   if (loading) {
     return (
       <Box>
-        <p className="text-sm text-slate-400">Chargement du compte…</p>
+        <p className="text-sm text-summit-muted">Chargement du compte...</p>
       </Box>
     )
   }
@@ -105,34 +104,16 @@ export default function CloudAccount() {
   if (!user) {
     return (
       <Box>
-        <div className="mb-3 grid grid-cols-2 rounded-lg bg-summit-bg p-1 text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => {
-              setMode('signin')
-              setMsg(null)
-            }}
-            className={`rounded-md py-2 ${
-              mode === 'signin' ? 'bg-summit-accent text-summit-bg' : 'text-slate-400'
-            }`}
-          >
+        <div className="mb-3 grid grid-cols-2 rounded-xl bg-summit-bg p-1 text-xs font-bold">
+          <ModeButton active={mode === 'signin'} onClick={() => setMode('signin')}>
             Connexion
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setMode('signup')
-              setMsg(null)
-            }}
-            className={`rounded-md py-2 ${
-              mode === 'signup' ? 'bg-summit-accent text-summit-bg' : 'text-slate-400'
-            }`}
-          >
+          </ModeButton>
+          <ModeButton active={mode === 'signup'} onClick={() => setMode('signup')}>
             Créer un compte
-          </button>
+          </ModeButton>
         </div>
         <form onSubmit={handleSignIn} className="space-y-2">
-          <label className="block text-sm text-slate-300">
+          <label className="block text-sm font-semibold text-summit-ink">
             {mode === 'signin' ? 'Se connecter' : 'Créer un compte'}
           </label>
           <input
@@ -141,7 +122,7 @@ export default function CloudAccount() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="ton@email.fr"
-            className="w-full rounded-lg bg-summit-bg px-3 py-2 text-sm text-white outline-none ring-1 ring-summit-surface2 focus:ring-summit-accent"
+            className="w-full rounded-xl border border-summit-line bg-white px-3 py-2 text-sm text-summit-ink outline-none focus:border-summit-accent"
           />
           <input
             type="password"
@@ -150,59 +131,65 @@ export default function CloudAccount() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mot de passe"
-            className="w-full rounded-lg bg-summit-bg px-3 py-2 text-sm text-white outline-none ring-1 ring-summit-surface2 focus:ring-summit-accent"
+            className="w-full rounded-xl border border-summit-line bg-white px-3 py-2 text-sm text-summit-ink outline-none focus:border-summit-accent"
           />
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full rounded-lg bg-summit-accent py-2.5 text-sm font-semibold text-summit-bg disabled:opacity-50"
-          >
-            {busy ? 'Patiente…' : mode === 'signin' ? 'Se connecter' : 'Créer le compte'}
+          <button type="submit" disabled={busy} className="w-full aura-button-primary py-2.5 text-sm">
+            {busy ? 'Patiente...' : mode === 'signin' ? 'Se connecter' : 'Créer le compte'}
           </button>
         </form>
-        {msg && <p className="mt-2 text-xs text-slate-400">{msg}</p>}
+        {msg && <p className="mt-2 text-xs font-medium text-summit-muted">{msg}</p>}
       </Box>
     )
   }
 
   return (
     <Box>
-      <p className="text-sm text-white">Connecté : {user.email}</p>
+      <p className="text-sm font-semibold text-summit-ink">Connecté : {user.email}</p>
       <div className="mt-3 space-y-2">
-        <button
-          onClick={handleSync}
-          disabled={busy}
-          className="w-full rounded-lg bg-summit-surface2 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
-        >
+        <button onClick={handleSync} disabled={busy} className="w-full aura-button-secondary py-2.5 text-sm">
           Synchroniser maintenant
         </button>
         {isPushConfigured ? (
           <button
             onClick={handleTogglePush}
             disabled={busy}
-            className={`w-full rounded-lg py-2.5 text-sm font-semibold disabled:opacity-50 ${
-              pushOn ? 'bg-summit-surface2 text-white' : 'bg-summit-accent text-summit-bg'
+            className={`w-full rounded-xl py-2.5 text-sm font-semibold disabled:opacity-50 ${
+              pushOn ? 'border border-summit-line bg-white text-summit-ink' : 'bg-summit-accent text-white'
             }`}
           >
             {pushOn ? 'Désactiver les notifications push' : 'Activer les notifications push 🔔'}
           </button>
         ) : (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-summit-muted">
             Renseigne <code>VITE_VAPID_PUBLIC_KEY</code> pour activer les rappels planifiés.
           </p>
         )}
         <button
           onClick={() => signOut()}
-          className="w-full rounded-lg border border-summit-surface2 py-2.5 text-sm font-semibold text-slate-300"
+          className="w-full rounded-xl border border-summit-line py-2.5 text-sm font-semibold text-summit-muted"
         >
           Se déconnecter
         </button>
       </div>
-      {msg && <p className="mt-2 text-xs text-slate-400">{msg}</p>}
+      {msg && <p className="mt-2 text-xs font-medium text-summit-muted">{msg}</p>}
     </Box>
   )
 }
 
+function ModeButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        onClick()
+      }}
+      className={`rounded-lg py-2 ${active ? 'bg-summit-accent text-white' : 'text-summit-muted'}`}
+    >
+      {children}
+    </button>
+  )
+}
+
 function Box({ children }: { children: ReactNode }) {
-  return <div className="rounded-xl border border-summit-surface2/60 bg-summit-surface p-4">{children}</div>
+  return <div className="aura-card p-4">{children}</div>
 }

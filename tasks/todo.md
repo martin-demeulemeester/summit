@@ -1,9 +1,9 @@
 # Summit - Suivi des tâches
 
 Projet : PWA de suivi de routine quotidienne (React + TS + Vite + Tailwind + Dexie).
-Version courante : 0.2.0
+Version courante : 0.4.0
 
-## Fait (V1 - cœur local)
+## Fait (V1 - coeur local)
 
 - [x] Phase 0 - Initialisation : Vite + React + TS, Tailwind, vite-plugin-pwa, Dexie, Recharts
 - [x] Phase 1 - Domaine + stockage local : routine, types, logique streak/joker, progression, schéma Dexie
@@ -22,17 +22,22 @@ Version courante : 0.2.0
 - [x] Projet Supabase créé, tables + RLS appliquées
 - [x] Auth cloud + synchro cloud validées
 - [x] Fonction Edge `send-reminders` déployée (CLI) + secrets VAPID/CRON configurés
-- [x] Push validé de bout en bout sur desktop (Brave) : notification reçue ✅
+- [x] Push validé de bout en bout sur desktop (Brave) : notification reçue
 
 ## Reste à faire
 
+- [x] Refonte DA inspirée d'Aura (GrowthWire)
+  - Passer Summit sur une base claire pastel avec accent violet
+  - Refaire navigation, cartes, boutons et indicateurs
+  - Garder la logique métier inchangée
+  - Vérifier TypeScript (`tsc --noEmit`) ; build Vite à relancer hors sandbox
 - [x] Remplacer le lien magique par une connexion email + mot de passe
   - Ajouter inscription et connexion par mot de passe dans `src/lib/auth.ts`
   - Adapter la section Compte dans les Réglages
   - Mettre à jour version, changelog et documentation
   - Vérifier avec TypeScript (`tsc --noEmit`) ; build/tests Vite à relancer hors sandbox si nécessaire
 - [ ] Activer le cron automatique : exécuter `supabase/migrations/0002_cron.sql` dans le SQL Editor
-- [ ] Déployer la PWA en HTTPS (Netlify/Vercel/Cloudflare) pour le push **téléphone, app fermée**
+- [ ] Déployer la PWA en HTTPS (Netlify/Vercel/Cloudflare) pour le push téléphone, app fermée
 - [ ] Installer la PWA sur Android + activer le push dessus
 - [ ] Révoquer le Personal Access Token Supabase (sécurité) une fois les déploiements finis
 - [ ] Remplacer les icônes SVG par des PNG 192/512 générés (meilleure compat install Android)

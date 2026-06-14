@@ -5,14 +5,20 @@ export default {
     extend: {
       colors: {
         summit: {
-          bg: '#0f172a',
-          surface: '#1e293b',
-          surface2: '#334155',
-          accent: '#38bdf8',
-          accent2: '#22d3ee',
-          success: '#34d399',
-          warn: '#fbbf24',
-          danger: '#f87171',
+          bg: '#f7f3ff',
+          surface: '#ffffff',
+          surface2: '#e7ddf7',
+          accent: '#7c3aed',
+          accent2: '#12a594',
+          success: '#18a058',
+          warn: '#f2b84b',
+          danger: '#d84c65',
+          ink: '#241344',
+          muted: '#776b86',
+          line: '#ddd2ef',
+          blush: '#fff1e8',
+          mint: '#e9faf4',
+          cream: '#fff8e7',
         },
       },
       fontFamily: {

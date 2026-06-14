@@ -20,17 +20,18 @@ export default function Today() {
 
   return (
     <div className="space-y-5">
-      <header>
-        <h1 className="text-2xl font-bold text-white">Aujourd'hui</h1>
-        <p className="text-sm capitalize text-slate-400">{prettyDate(today)}</p>
+      <header className="rounded-[1.75rem] bg-summit-bg/80 pb-1 pt-2">
+        <p className="text-sm font-semibold capitalize text-summit-muted">{prettyDate(today)}</p>
+        <h1 className="text-4xl font-extrabold tracking-normal text-summit-accent">Summit</h1>
+        <p className="mt-1 text-sm text-summit-muted">Ton coach discret pour tenir la journée.</p>
       </header>
 
       <StreakHeader currentStreak={currentStreak} jokers={jokers} />
 
-      <section>
+      <section className="aura-card-soft p-4">
         <div className="mb-2 flex items-center justify-between text-sm">
-          <span className="font-medium text-slate-300">Progression du jour</span>
-          <span className="text-slate-400">
+          <span className="font-bold text-summit-ink">Progression du jour</span>
+          <span className="font-semibold text-summit-muted">
             {done} / {TOTAL_DAILY_ITEMS}
           </span>
         </div>
@@ -38,29 +39,27 @@ export default function Today() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Tâches
-        </h2>
+        <h2 className="text-sm font-bold uppercase tracking-wide text-summit-muted">Tâches</h2>
         {DAILY_TASKS.map((task) => {
           const checked = log.tasks[task.id] === true
           return (
             <button
               key={task.id}
               onClick={() => toggleTask(today, task.id)}
-              className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors ${
+              className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left shadow-[0_10px_24px_rgba(57,31,91,0.06)] transition-colors ${
                 checked
-                  ? 'border-summit-success/40 bg-summit-success/10'
-                  : 'border-summit-surface2/60 bg-summit-surface hover:border-summit-surface2'
+                  ? 'border-summit-success/30 bg-summit-mint'
+                  : 'border-summit-line/80 bg-white hover:border-summit-accent/40'
               }`}
             >
-              <span className="text-2xl">{task.emoji}</span>
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-summit-bg text-2xl">
+                {task.emoji}
+              </span>
               <span className="flex-1">
-                <span className={`block font-medium ${checked ? 'text-summit-success' : 'text-white'}`}>
+                <span className={`block font-bold ${checked ? 'text-summit-success' : 'text-summit-ink'}`}>
                   {task.label}
                 </span>
-                {task.description && (
-                  <span className="text-xs text-slate-400">{task.description}</span>
-                )}
+                {task.description && <span className="text-xs text-summit-muted">{task.description}</span>}
               </span>
               <Checkbox checked={checked} />
             </button>
@@ -69,13 +68,11 @@ export default function Today() {
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Sport
-        </h2>
-        <div className="rounded-xl border border-summit-surface2/60 bg-summit-surface p-4">
+        <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-summit-muted">Sport</h2>
+        <div className="aura-card p-4">
           <div className="mb-3 flex items-center justify-between">
-            <span className="font-medium text-white">Blocs du jour</span>
-            <span className="text-sm text-slate-400">
+            <span className="font-bold text-summit-ink">Blocs du jour</span>
+            <span className="text-sm font-semibold text-summit-muted">
               {sportDone} / {SPORT_BLOCKS_PER_DAY}
             </span>
           </div>
@@ -84,15 +81,12 @@ export default function Today() {
               <div
                 key={i}
                 className={`h-3 flex-1 rounded-full ${
-                  i < sportDone ? 'bg-summit-success' : 'bg-summit-surface2'
+                  i < sportDone ? 'bg-summit-accent' : 'bg-summit-surface2/80'
                 }`}
               />
             ))}
           </div>
-          <Link
-            to="/sport"
-            className="block rounded-xl bg-summit-accent py-3 text-center font-semibold text-summit-bg transition-opacity hover:opacity-90"
-          >
+          <Link to="/sport" className="block aura-button-primary text-center">
             {sportDone >= SPORT_BLOCKS_PER_DAY ? 'Refaire un bloc 💪' : 'Démarrer un bloc 💪'}
           </Link>
         </div>
@@ -105,9 +99,7 @@ function Checkbox({ checked }: { checked: boolean }) {
   return (
     <span
       className={`flex h-6 w-6 items-center justify-center rounded-full border-2 ${
-        checked
-          ? 'border-summit-success bg-summit-success text-summit-bg'
-          : 'border-slate-500'
+        checked ? 'border-summit-success bg-summit-success text-white' : 'border-summit-line bg-white'
       }`}
     >
       {checked && (
@@ -124,9 +116,5 @@ function Checkbox({ checked }: { checked: boolean }) {
 }
 
 function LoadingState() {
-  return (
-    <div className="flex h-64 items-center justify-center text-slate-500">
-      Chargement…
-    </div>
-  )
+  return <div className="flex h-64 items-center justify-center text-summit-muted">Chargement...</div>
 }

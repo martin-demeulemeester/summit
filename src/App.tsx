@@ -26,7 +26,7 @@ export default function App() {
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col">
       <SyncManager />
-      <main className="safe-top flex-1 px-4 pb-28 pt-4">
+      <main className="safe-top flex-1 px-4 pb-28 pt-5">
         <Routes>
           <Route path="/" element={<Today />} />
           <Route path="/sport" element={<Workout />} />

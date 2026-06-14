@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -14,10 +14,37 @@ body,
 
 body {
   margin: 0;
-  background-color: theme('colors.summit.bg');
-  color: #e2e8f0;
+  background:
+    linear-gradient(180deg, #f3edff 0%, #f8f4ff 36%, #fff8ee 100%);
+  color: theme('colors.summit.ink');
   font-family: theme('fontFamily.sans');
   -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .aura-card {
+    @apply rounded-2xl border border-summit-line/80 bg-summit-surface shadow-[0_16px_44px_rgba(57,31,91,0.10)];
+  }
+
+  .aura-card-soft {
+    @apply rounded-2xl border border-summit-line/70 bg-white/72 shadow-[0_12px_32px_rgba(57,31,91,0.08)] backdrop-blur;
+  }
+
+  .aura-title {
+    @apply text-summit-ink;
+  }
+
+  .aura-muted {
+    @apply text-summit-muted;
+  }
+
+  .aura-button-primary {
+    @apply rounded-xl bg-summit-accent py-3 font-semibold text-white shadow-[0_10px_24px_rgba(124,58,237,0.22)] transition-opacity hover:opacity-90 disabled:opacity-50;
+  }
+
+  .aura-button-secondary {
+    @apply rounded-xl border border-summit-line bg-white py-3 font-semibold text-summit-ink transition-colors hover:bg-summit-bg disabled:opacity-50;
+  }
 }
 
 /* Zones sûres pour les téléphones avec encoche */

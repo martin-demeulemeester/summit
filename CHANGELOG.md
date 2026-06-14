@@ -4,6 +4,13 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.5.1] - 2026-06-14
+
+### Corrigé
+
+- Correction de l'identifiant interne généré depuis le pseudo : utilisation d'un
+  domaine e-mail réservé valide (`summit.example.com`) accepté par Supabase.
+
 ## [0.5.0] - 2026-06-14
 
 ### Modifié

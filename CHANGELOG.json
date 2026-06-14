@@ -2,6 +2,15 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.5.1",
+      "date": "2026-06-14",
+      "changes": {
+        "fixed": [
+          "Correction du domaine interne généré depuis le pseudo : summit.example.com est accepté par Supabase"
+        ]
+      }
+    },
+    {
       "version": "0.5.0",
       "date": "2026-06-14",
       "changes": {

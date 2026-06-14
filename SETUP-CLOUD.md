@@ -34,7 +34,7 @@ automatiquement après connexion.
 
 > Auth : dans Supabase **Authentication -> Providers**, active le provider Email
 > et désactive **Confirm email**. Summit convertit le pseudo en identifiant interne
-> invisible (`pseudo@summit.local`) pour utiliser Supabase Auth sans demander
+> invisible (`pseudo@summit.example.com`) pour utiliser Supabase Auth sans demander
 > d'e-mail à l'utilisateur.
 
 ## 4. Générer les clés VAPID (push)

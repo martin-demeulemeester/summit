@@ -40,7 +40,7 @@ function pseudoToInternalEmail(pseudo: string): string {
     throw new Error('Le pseudo doit contenir au moins 2 caractères.')
   }
 
-  return `${normalized}@summit.local`
+  return `${normalized}@summit.example.com`
 }
 
 /** Connexion avec pseudo + mot de passe. */

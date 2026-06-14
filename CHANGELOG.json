@@ -2,11 +2,21 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.3.0",
+      "date": "2026-06-14",
+      "changes": {
+        "changed": [
+          "Remplacement de la connexion par lien magique par une authentification email + mot de passe",
+          "Ajout d'un mode Créer un compte dans la section Compte & sauvegarde cloud"
+        ]
+      }
+    },
+    {
       "version": "0.2.0",
       "date": "2026-06-14",
       "changes": {
         "added": [
-          "Sauvegarde cloud Supabase : auth lien magique + synchro logs/réglages (last-write-wins)",
+          "Sauvegarde cloud Supabase : authentification e-mail + synchro logs/réglages (last-write-wins)",
           "Notifications Web Push : service worker injectManifest (push + notificationclick) et abonnement depuis les Réglages",
           "Fonction Edge send-reminders (Deno) + cron pg_cron pour les rappels dus, gestion du fuseau par appareil",
           "Schéma SQL + RLS (supabase/migrations) et guide SETUP-CLOUD.md",

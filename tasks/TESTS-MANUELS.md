@@ -7,7 +7,7 @@
 - [x] Rendu des 5 écrans sans erreur runtime (Aujourd'hui, Sport, Progression, Historique, Réglages)
 - [x] Cocher une tâche met à jour le compteur du jour (1/9)
 - [x] Déroulé d'un bloc de sport : Tractions -> Repos -> Pompes (enchaînement des étapes)
-- [x] Version affichée dans Réglages (Summit v0.1.0)
+- [x] Version affichée dans Réglages
 
 ## À tester manuellement sur ton téléphone Android
 
@@ -20,7 +20,7 @@
 
 ## À tester après configuration cloud (voir SETUP-CLOUD.md)
 
-- [ ] Réglages -> Compte : connexion par lien magique reçu par e-mail
+- [ ] Réglages -> Compte : création de compte puis connexion email + mot de passe
 - [ ] Synchroniser maintenant -> données visibles depuis un autre navigateur/appareil
 - [ ] Activer les notifications push, puis recevoir un rappel planifié **app fermée**
 - [ ] Vérifier que seules les tâches non faites déclenchent un rappel

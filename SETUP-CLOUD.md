@@ -28,11 +28,13 @@ VITE_SUPABASE_ANON_KEY=eyJhbGci...
 VITE_VAPID_PUBLIC_KEY=        # rempli à l'étape 5
 ```
 
-Relance `npm run dev`. Dans **Réglages -> Compte & sauvegarde cloud**, connecte-toi
-par lien magique. La synchro se fait automatiquement après connexion.
+Relance `npm run dev`. Dans **Réglages -> Compte & sauvegarde cloud**, crée ton
+compte avec email + mot de passe, puis connecte-toi. La synchro se fait
+automatiquement après connexion.
 
-> Auth e-mail : dans Supabase **Authentication -> Providers**, l'e-mail (magic link)
-> est activé par défaut. Ajoute l'URL de l'app dans **URL Configuration -> Redirect URLs**.
+> Auth e-mail : dans Supabase **Authentication -> Providers**, active le provider
+> Email. Si la confirmation d'e-mail est activée, ajoute l'URL de l'app dans
+> **URL Configuration -> Redirect URLs**.
 
 ## 4. Générer les clés VAPID (push)
 

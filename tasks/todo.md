@@ -13,19 +13,24 @@ Version courante : 0.2.0
 
 ## Fait (V1 - cloud & notifications)
 
-- [x] Phase 4 - Cloud Supabase : client, auth lien magique, tables + RLS, synchro local <-> cloud (last-write-wins)
+- [x] Phase 4 - Cloud Supabase : client, auth email + mot de passe, tables + RLS, synchro local <-> cloud (last-write-wins)
 - [x] Phase 5 - Notifications push : SW injectManifest (push/click), abonnement client, Edge Function `send-reminders` + cron
 - [x] Guide d'installation `SETUP-CLOUD.md`, schéma SQL, fonction Edge
 
 ## Fait (cloud en production)
 
 - [x] Projet Supabase créé, tables + RLS appliquées
-- [x] Auth lien magique + synchro cloud validées
+- [x] Auth cloud + synchro cloud validées
 - [x] Fonction Edge `send-reminders` déployée (CLI) + secrets VAPID/CRON configurés
 - [x] Push validé de bout en bout sur desktop (Brave) : notification reçue ✅
 
 ## Reste à faire
 
+- [x] Remplacer le lien magique par une connexion email + mot de passe
+  - Ajouter inscription et connexion par mot de passe dans `src/lib/auth.ts`
+  - Adapter la section Compte dans les Réglages
+  - Mettre à jour version, changelog et documentation
+  - Vérifier avec TypeScript (`tsc --noEmit`) ; build/tests Vite à relancer hors sandbox si nécessaire
 - [ ] Activer le cron automatique : exécuter `supabase/migrations/0002_cron.sql` dans le SQL Editor
 - [ ] Déployer la PWA en HTTPS (Netlify/Vercel/Cloudflare) pour le push **téléphone, app fermée**
 - [ ] Installer la PWA sur Android + activer le push dessus

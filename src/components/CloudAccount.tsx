@@ -1,12 +1,16 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
-import { useAuth, signInWithEmail, signOut } from '../lib/auth'
+import { useAuth, signInWithPassword, signOut, signUpWithPassword } from '../lib/auth'
 import { isCloudConfigured, isPushConfigured } from '../lib/supabase'
 import { fullSync } from '../lib/sync'
 import { disablePush, enablePush, isPushEnabled } from '../lib/push'
 
+type AuthMode = 'signin' | 'signup'
+
 export default function CloudAccount() {
   const { user, loading } = useAuth()
+  const [mode, setMode] = useState<AuthMode>('signin')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [msg, setMsg] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [pushOn, setPushOn] = useState(false)
@@ -38,11 +42,24 @@ export default function CloudAccount() {
 
   async function handleSignIn(e: FormEvent) {
     e.preventDefault()
+    if (password.length < 6) {
+      setMsg('Le mot de passe doit contenir au moins 6 caractères.')
+      return
+    }
     setBusy(true)
     setMsg(null)
     try {
-      await signInWithEmail(email)
-      setMsg('Lien de connexion envoyé ! Vérifie ta boîte mail.')
+      if (mode === 'signin') {
+        await signInWithPassword(email, password)
+        setMsg('Connexion réussie ✅')
+      } else {
+        const { needsConfirmation } = await signUpWithPassword(email, password)
+        setMsg(
+          needsConfirmation
+            ? 'Compte créé. Vérifie ton e-mail pour confirmer ton adresse, puis reconnecte-toi.'
+            : 'Compte créé et connecté ✅',
+        )
+      }
     } catch (err) {
       setMsg(`Erreur : ${(err as Error).message}`)
     } finally {
@@ -88,8 +105,36 @@ export default function CloudAccount() {
   if (!user) {
     return (
       <Box>
+        <div className="mb-3 grid grid-cols-2 rounded-lg bg-summit-bg p-1 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => {
+              setMode('signin')
+              setMsg(null)
+            }}
+            className={`rounded-md py-2 ${
+              mode === 'signin' ? 'bg-summit-accent text-summit-bg' : 'text-slate-400'
+            }`}
+          >
+            Connexion
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode('signup')
+              setMsg(null)
+            }}
+            className={`rounded-md py-2 ${
+              mode === 'signup' ? 'bg-summit-accent text-summit-bg' : 'text-slate-400'
+            }`}
+          >
+            Créer un compte
+          </button>
+        </div>
         <form onSubmit={handleSignIn} className="space-y-2">
-          <label className="block text-sm text-slate-300">Se connecter (lien magique)</label>
+          <label className="block text-sm text-slate-300">
+            {mode === 'signin' ? 'Se connecter' : 'Créer un compte'}
+          </label>
           <input
             type="email"
             required
@@ -98,12 +143,21 @@ export default function CloudAccount() {
             placeholder="ton@email.fr"
             className="w-full rounded-lg bg-summit-bg px-3 py-2 text-sm text-white outline-none ring-1 ring-summit-surface2 focus:ring-summit-accent"
           />
+          <input
+            type="password"
+            required
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mot de passe"
+            className="w-full rounded-lg bg-summit-bg px-3 py-2 text-sm text-white outline-none ring-1 ring-summit-surface2 focus:ring-summit-accent"
+          />
           <button
             type="submit"
             disabled={busy}
             className="w-full rounded-lg bg-summit-accent py-2.5 text-sm font-semibold text-summit-bg disabled:opacity-50"
           >
-            {busy ? 'Envoi…' : 'Recevoir le lien'}
+            {busy ? 'Patiente…' : mode === 'signin' ? 'Se connecter' : 'Créer le compte'}
           </button>
         </form>
         {msg && <p className="mt-2 text-xs text-slate-400">{msg}</p>}

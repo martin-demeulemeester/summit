@@ -4,11 +4,19 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.3.0] - 2026-06-14
+
+### Modifié
+
+- Remplacement de la connexion par lien magique par une authentification
+  email + mot de passe.
+- Ajout d'un mode « Créer un compte » dans la section Compte & sauvegarde cloud.
+
 ## [0.2.0] - 2026-06-14
 
 ### Ajouté
 
-- Sauvegarde cloud via Supabase : connexion par lien magique, synchronisation
+- Sauvegarde cloud via Supabase : authentification e-mail, synchronisation
   automatique des logs et réglages (résolution de conflits « dernière écriture
   gagnante »).
 - Notifications Web Push : service worker (stratégie injectManifest) avec gestion

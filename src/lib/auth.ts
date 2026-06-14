@@ -25,14 +25,26 @@ export function useAuth(): { user: User | null; loading: boolean } {
   return { user, loading }
 }
 
-/** Envoie un lien magique de connexion par e-mail. */
-export async function signInWithEmail(email: string): Promise<void> {
+/** Connexion avec email + mot de passe. */
+export async function signInWithPassword(email: string, password: string): Promise<void> {
   if (!supabase) throw new Error('Cloud non configuré')
-  const { error } = await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
+    password,
+  })
+  if (error) throw error
+}
+
+/** Création de compte avec email + mot de passe. */
+export async function signUpWithPassword(email: string, password: string): Promise<{ needsConfirmation: boolean }> {
+  if (!supabase) throw new Error('Cloud non configuré')
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
     options: { emailRedirectTo: window.location.origin },
   })
   if (error) throw error
+  return { needsConfirmation: !data.session }
 }
 
 /** Déconnexion. */

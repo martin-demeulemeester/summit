@@ -2,6 +2,16 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.7.2",
+      "date": "2026-06-14",
+      "changes": {
+        "fixed": [
+          "Uniformisation des familles de police sur les titres, chiffres, onglets et minuteurs",
+          "Ajout d'une marge haute globale compatible avec les zones sûres mobile"
+        ]
+      }
+    },
+    {
       "version": "0.7.1",
       "date": "2026-06-14",
       "changes": {

@@ -4,6 +4,14 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.7.2] - 2026-06-14
+
+### Corrigé
+
+- Uniformisation des familles de police sur les titres, chiffres, onglets et
+  minuteurs.
+- Ajout d'une marge haute globale compatible avec les zones sûres mobile.
+
 ## [0.7.1] - 2026-06-14
 
 ### Corrigé

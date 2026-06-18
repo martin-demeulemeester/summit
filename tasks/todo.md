@@ -1,7 +1,7 @@
 # Summit - Suivi des tâches
 
 Projet : PWA de suivi de routine quotidienne (React + TS + Vite + Tailwind + Dexie).
-Version courante : 0.7.2
+Version courante : 0.8.0
 
 ## Fait (V1 - coeur local)
 
@@ -58,10 +58,19 @@ Version courante : 0.7.2
 - [ ] Remplacer les icônes SVG par des PNG 192/512 générés (meilleure compat install Android)
 - [ ] (Optionnel) Lazy-load de la page Progression pour réduire le bundle (~Recharts)
 
-## V2 (préparé, non implémenté)
+## V2.0 - Coach caméra (fait)
 
-- [ ] Coach IA caméra : comptage de reps + posture (MediaPipe / TF.js MoveNet)
-- [ ] Analyse vidéo + conseils via API Claude
+- [x] Détection de pose MediaPipe (PoseLandmarker), chargée en lazy (`src/coach/poseLandmarker.ts`)
+- [x] Logique de comptage testée : géométrie, machine à états reps + mode maintien (`src/coach/`, 10 tests)
+- [x] Écran `/coach` : caméra, overlay squelette, compteur live, feedback posture, validation de bloc
+- [x] Pompes + tractions (beta) + gainage ; intégration `addSportBlock`
+- [x] Build OK (coach en chunk lazy séparé), dégradation gracieuse sans caméra
+- [ ] Test réel sur Android (caméra) : fiabilité du comptage à valider en conditions réelles
+
+## V2.1 (à venir)
+
+- [ ] Analyse vidéo + conseils via API Claude (backend proxy Supabase pour garder la clé côté serveur)
+- [ ] (Option) Mettre WASM + modèle MediaPipe en cache SW pour un fonctionnement 100 % hors-ligne
 
 ## Notes
 

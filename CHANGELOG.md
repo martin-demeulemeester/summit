@@ -4,6 +4,21 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.0] - 2026-06-18
+
+### Ajouté
+
+- **Coach caméra (V2.0)** : nouvel écran `/coach` qui compte les répétitions en
+  temps réel et donne un feedback de posture basique, 100 % sur l'appareil
+  (aucune vidéo n'est envoyée).
+- Détection de pose via MediaPipe Tasks Vision (PoseLandmarker), chargée en lazy
+  pour ne pas alourdir le bundle principal.
+- Comptage par machine à états avec hystérésis (pompes, tractions en beta) et mode
+  maintien chronométré (gainage), logique pure isolée dans `src/coach/` et testée.
+- Overlay squelette en surimpression, sélection d'exercice, validation d'un bloc de
+  sport à l'atteinte de la cible (compte dans les 4 blocs du jour).
+- Boutons d'accès « Coach caméra » sur l'accueil et l'écran Sport.
+
 ## [0.7.2] - 2026-06-14
 
 ### Corrigé

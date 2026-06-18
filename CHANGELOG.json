@@ -2,6 +2,19 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.8.0",
+      "date": "2026-06-18",
+      "changes": {
+        "added": [
+          "Coach caméra (V2.0) : écran /coach, comptage de reps en temps réel + feedback posture, 100% on-device (aucune vidéo envoyée)",
+          "Détection de pose MediaPipe Tasks Vision (PoseLandmarker) chargée en lazy",
+          "Comptage par machine à états avec hystérésis (pompes, tractions beta) et mode maintien (gainage), logique testée dans src/coach/",
+          "Overlay squelette, sélection d'exercice, validation d'un bloc à l'atteinte de la cible",
+          "Boutons d'accès Coach caméra sur l'accueil et l'écran Sport"
+        ]
+      }
+    },
+    {
       "version": "0.7.2",
       "date": "2026-06-14",
       "changes": {

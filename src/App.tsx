@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
 import Today from './pages/Today'
@@ -8,6 +8,9 @@ import History from './pages/History'
 import SettingsPage from './pages/Settings'
 import { useAuth } from './lib/auth'
 import { fullSync } from './lib/sync'
+
+// Lazy : MediaPipe (coach caméra) reste hors du bundle principal.
+const Coach = lazy(() => import('./pages/Coach'))
 
 /** Synchronise avec le cloud à la connexion puis périodiquement. */
 function SyncManager() {
@@ -33,6 +36,14 @@ export default function App() {
           <Routes location={location}>
             <Route path="/" element={<Today />} />
             <Route path="/sport" element={<Workout />} />
+            <Route
+              path="/coach"
+              element={
+                <Suspense fallback={<div className="flex h-64 items-center justify-center text-summit-muted">Chargement de la coach…</div>}>
+                  <Coach />
+                </Suspense>
+              }
+            />
             <Route path="/progression" element={<Progress />} />
             <Route path="/historique" element={<History />} />
             <Route path="/reglages" element={<SettingsPage />} />

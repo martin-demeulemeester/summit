@@ -65,9 +65,14 @@ export default function Workout() {
           <p className="summit-label">Bloc {blocksDone + 1} / {SPORT_BLOCKS_PER_DAY} · étape {index + 1} / {STEPS.length}</p>
           <h1 className="font-display text-4xl font-black text-summit-ink">Séance sport</h1>
         </div>
-        <button onClick={() => navigate('/')} className="rounded-full border-2 border-summit-line bg-summit-surface px-3 py-1.5 text-sm font-black text-summit-ink shadow-[3px_3px_0_rgba(31,25,19,0.14)]">
-          Quitter
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => navigate('/coach')} className="rounded-full border-2 border-summit-line bg-summit-accent px-3 py-1.5 text-sm font-black text-summit-night shadow-[3px_3px_0_rgba(31,25,19,0.14)]">
+            🎥 Coach
+          </button>
+          <button onClick={() => navigate('/')} className="rounded-full border-2 border-summit-line bg-summit-surface px-3 py-1.5 text-sm font-black text-summit-ink shadow-[3px_3px_0_rgba(31,25,19,0.14)]">
+            Quitter
+          </button>
+        </div>
       </header>
 
       <StepProgress index={index} total={STEPS.length} />

@@ -94,6 +94,9 @@ export default function Today() {
           <Link to="/sport" className="block aura-button-primary text-center">
             {sportDone >= SPORT_BLOCKS_PER_DAY ? 'Refaire un bloc' : 'Démarrer un bloc'}
           </Link>
+          <Link to="/coach" className="mt-2 block aura-button-secondary text-center">
+            Coach caméra 🎥
+          </Link>
         </div>
       </section>
     </div>

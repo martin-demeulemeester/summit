@@ -17,7 +17,13 @@ respecte [SemVer](https://semver.org/lang/fr/).
   maintien chronométré (gainage), logique pure isolée dans `src/coach/` et testée.
 - Overlay squelette en surimpression, sélection d'exercice, validation d'un bloc de
   sport à l'atteinte de la cible (compte dans les 4 blocs du jour).
-- Boutons d'accès « Coach caméra » sur l'accueil et l'écran Sport.
+- **Caméra intégrée à la séance guidée** : chaque étape de reps (tractions, pompes,
+  gainage) se valide en réalisant réellement l'effort compté par la caméra. Le bouton
+  « C'est fait » qui validait gratuitement a été supprimé ; une validation manuelle
+  n'apparaît qu'en cas de caméra réellement indisponible.
+- Composant caméra réutilisable `src/coach/CoachCamera.tsx` partagé entre l'écran
+  Coach et la séance.
+- Bouton d'accès « Coach caméra » (pratique libre) sur l'accueil.
 
 ## [0.7.2] - 2026-06-14
 

@@ -10,7 +10,9 @@
           "Détection de pose MediaPipe Tasks Vision (PoseLandmarker) chargée en lazy",
           "Comptage par machine à états avec hystérésis (pompes, tractions beta) et mode maintien (gainage), logique testée dans src/coach/",
           "Overlay squelette, sélection d'exercice, validation d'un bloc à l'atteinte de la cible",
-          "Boutons d'accès Coach caméra sur l'accueil et l'écran Sport"
+          "Caméra intégrée à la séance guidée : chaque étape de reps se valide en réalisant l'effort compté ; suppression du bouton 'C'est fait' (validation manuelle seulement si caméra indisponible)",
+          "Composant réutilisable src/coach/CoachCamera.tsx partagé écran Coach + séance",
+          "Bouton d'accès Coach caméra (pratique libre) sur l'accueil"
         ]
       }
     },

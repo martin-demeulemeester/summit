@@ -63,6 +63,7 @@ Version courante : 0.8.0
 - [x] Détection de pose MediaPipe (PoseLandmarker), chargée en lazy (`src/coach/poseLandmarker.ts`)
 - [x] Logique de comptage testée : géométrie, machine à états reps + mode maintien (`src/coach/`, 10 tests)
 - [x] Écran `/coach` : caméra, overlay squelette, compteur live, feedback posture, validation de bloc
+- [x] Caméra intégrée à la séance guidée : reps validées par l'effort réel, plus de bouton « C'est fait » (composant `CoachCamera` réutilisable)
 - [x] Pompes + tractions (beta) + gainage ; intégration `addSportBlock`
 - [x] Build OK (coach en chunk lazy séparé), dégradation gracieuse sans caméra
 - [ ] Test réel sur Android (caméra) : fiabilité du comptage à valider en conditions réelles

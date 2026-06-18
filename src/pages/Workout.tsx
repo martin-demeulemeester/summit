@@ -2,14 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLog, useSettings } from '../db/hooks'
 import { addSportBlock } from '../db/db'
-import {
-  REST_SECONDS,
-  SPORT_BLOCKS_PER_DAY,
-  exerciseById,
-  type ExerciseId,
-} from '../domain/routine'
+import { REST_SECONDS, SPORT_BLOCKS_PER_DAY, exerciseById, type ExerciseId } from '../domain/routine'
 import { formatDuration, todayKey } from '../lib/date'
 import type { Settings } from '../domain/types'
+import CoachCamera from '../coach/CoachCamera'
 
 type Step =
   | { kind: 'reps'; ex: ExerciseId }
@@ -62,24 +58,26 @@ export default function Workout() {
     <div className="space-y-5">
       <header className="flex items-start justify-between">
         <div>
-          <p className="summit-label">Bloc {blocksDone + 1} / {SPORT_BLOCKS_PER_DAY} · étape {index + 1} / {STEPS.length}</p>
+          <p className="summit-label">
+            Bloc {blocksDone + 1} / {SPORT_BLOCKS_PER_DAY} · étape {index + 1} / {STEPS.length}
+          </p>
           <h1 className="font-display text-4xl font-black text-summit-ink">Séance sport</h1>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => navigate('/coach')} className="rounded-full border-2 border-summit-line bg-summit-accent px-3 py-1.5 text-sm font-black text-summit-night shadow-[3px_3px_0_rgba(31,25,19,0.14)]">
-            🎥 Coach
-          </button>
-          <button onClick={() => navigate('/')} className="rounded-full border-2 border-summit-line bg-summit-surface px-3 py-1.5 text-sm font-black text-summit-ink shadow-[3px_3px_0_rgba(31,25,19,0.14)]">
-            Quitter
-          </button>
-        </div>
+        <button
+          onClick={() => navigate('/')}
+          className="rounded-full border-2 border-summit-line bg-summit-surface px-3 py-1.5 text-sm font-black text-summit-ink shadow-[3px_3px_0_rgba(31,25,19,0.14)]"
+        >
+          Quitter
+        </button>
       </header>
 
       <StepProgress index={index} total={STEPS.length} />
 
-      {step.kind === 'reps' && <RepsStep ex={step.ex} settings={settings} onDone={next} />}
-      {step.kind === 'rest' && <RestStep onDone={next} />}
-      {step.kind === 'hold' && <HoldStep ex={step.ex} settings={settings} onDone={next} />}
+      {step.kind === 'rest' ? (
+        <RestStep onDone={next} />
+      ) : (
+        <CoachStep ex={step.ex} settings={settings} onDone={next} />
+      )}
     </div>
   )
 }
@@ -97,26 +95,20 @@ function StepProgress({ index, total }: { index: number; total: number }) {
   )
 }
 
-function RepsStep({
-  ex,
-  settings,
-  onDone,
-}: {
-  ex: ExerciseId
-  settings: Settings
-  onDone: () => void
-}) {
+/** Étape d'exercice : la caméra valide en comptant l'effort réel (pas de skip). */
+function CoachStep({ ex, settings, onDone }: { ex: ExerciseId; settings: Settings; onDone: () => void }) {
   const def = exerciseById(ex)
   const target = settings.targets[ex]
+  const unit = def.unit === 'reps' ? 'reps' : 's'
   return (
-    <div className="aura-card flex flex-col items-center p-8 text-center">
-      <span className="flex h-24 w-24 rotate-[-3deg] items-center justify-center rounded-[2rem] border-2 border-summit-line bg-summit-paper text-6xl shadow-[5px_5px_0_rgba(31,25,19,0.12)]">{def.emoji}</span>
-      <h2 className="mt-5 text-xl font-black uppercase tracking-wide text-summit-ink">{def.label}</h2>
-      <p className="mt-2 font-display text-7xl font-black leading-none text-summit-accent">{target}</p>
-      <p className="summit-label">répétitions ou progression</p>
-      <button onClick={onDone} className="mt-8 w-full aura-button-primary">
-        C'est fait
-      </button>
+    <div className="space-y-3">
+      <div className="aura-card-soft p-3 text-center">
+        <p className="summit-label">{def.label}</p>
+        <p className="mt-0.5 text-sm font-bold text-summit-ink">
+          Fais {target} {unit} devant la caméra pour valider l'étape
+        </p>
+      </div>
+      <CoachCamera exerciseId={ex} target={target} onComplete={onDone} onManualSkip={onDone} />
     </div>
   )
 }
@@ -125,58 +117,15 @@ function RestStep({ onDone }: { onDone: () => void }) {
   const remaining = useCountdown(REST_SECONDS, onDone)
   return (
     <div className="aura-card flex flex-col items-center bg-summit-cream p-8 text-center">
-      <span className="flex h-24 w-24 rotate-2 items-center justify-center rounded-[2rem] border-2 border-summit-line bg-summit-surface text-6xl shadow-[5px_5px_0_rgba(31,25,19,0.12)]">⏱️</span>
+      <span className="flex h-24 w-24 rotate-2 items-center justify-center rounded-[2rem] border-2 border-summit-line bg-summit-surface text-6xl shadow-[5px_5px_0_rgba(31,25,19,0.12)]">
+        ⏱️
+      </span>
       <h2 className="mt-5 text-xl font-black uppercase tracking-wide text-summit-ink">Repos</h2>
       <p className="mt-2 font-mono text-6xl font-black text-summit-warn">{formatDuration(remaining)}</p>
       <button onClick={onDone} className="mt-8 w-full aura-button-secondary">
         Passer le repos
       </button>
     </div>
-  )
-}
-
-function HoldStep({
-  ex,
-  settings,
-  onDone,
-}: {
-  ex: ExerciseId
-  settings: Settings
-  onDone: () => void
-}) {
-  const def = exerciseById(ex)
-  const target = settings.targets[ex]
-  const [started, setStarted] = useState(false)
-
-  return (
-    <div className="aura-card flex flex-col items-center p-8 text-center">
-      <span className="flex h-24 w-24 rotate-[-3deg] items-center justify-center rounded-[2rem] border-2 border-summit-line bg-summit-paper text-6xl shadow-[5px_5px_0_rgba(31,25,19,0.12)]">{def.emoji}</span>
-      <h2 className="mt-5 text-xl font-black uppercase tracking-wide text-summit-ink">{def.label}</h2>
-      {!started ? (
-        <>
-          <p className="mt-2 font-mono text-6xl font-black text-summit-accent">{formatDuration(target)}</p>
-          <p className="summit-label">à tenir ou progression</p>
-          <button onClick={() => setStarted(true)} className="mt-8 w-full aura-button-primary">
-            Démarrer le gainage
-          </button>
-        </>
-      ) : (
-        <HoldTimer seconds={target} onDone={onDone} />
-      )}
-    </div>
-  )
-}
-
-function HoldTimer({ seconds, onDone }: { seconds: number; onDone: () => void }) {
-  const remaining = useCountdown(seconds, onDone)
-  return (
-    <>
-      <p className="mt-2 font-mono text-6xl font-extrabold text-summit-success">{formatDuration(remaining)}</p>
-      <p className="text-sm font-medium text-summit-muted">Tiens la position 🪵</p>
-      <button onClick={onDone} className="mt-8 w-full aura-button-secondary">
-        Terminer
-      </button>
-    </>
   )
 }
 

@@ -53,6 +53,24 @@ describe('compteur de répétitions', () => {
     expect(r.kind === 'reps' && r.reps).toBe(0)
   })
 
+  it("ne compte pas tant que la position n'est pas valide (ready)", () => {
+    // metric = x (angle), ready = y > 0.5 (position valide)
+    const cfg = { ...repConfig, ready: (lm: Landmark[]) => lm[0].y > 0.5, readyHint: 'place-toi' }
+    const c = createCoachCounter(cfg)
+    const f = (x: number, y: number): Landmark[] => [{ x, y, visibility: 1 }]
+    // position non valide (y=0) : aucun comptage
+    c.update(f(170, 0))
+    c.update(f(80, 0))
+    const r1 = c.update(f(170, 0))
+    expect(r1.kind === 'reps' && r1.reps).toBe(0)
+    expect(r1.feedback).toContain('place-toi')
+    // position valide (y=1) : un cycle compte
+    c.update(f(170, 1))
+    c.update(f(80, 1))
+    const r2 = c.update(f(170, 1))
+    expect(r2.kind === 'reps' && r2.reps).toBe(1)
+  })
+
   it('reset remet le compteur à zéro', () => {
     const c = createCoachCounter(repConfig)
     c.update(frame(170))

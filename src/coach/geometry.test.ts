@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { POSE, angle, bestArmSide, type Landmark } from './geometry'
-import { elbowAngle } from './exercises'
+import { elbowAngle, isBodyHorizontal, isBodyVertical } from './exercises'
 
 function emptyPose(): Landmark[] {
   return Array.from({ length: 33 }, () => ({ x: 0, y: 0, visibility: 0 }))
@@ -30,5 +30,21 @@ describe('elbowAngle', () => {
     bent[POSE.leftElbow] = { x: 0, y: 0.2, visibility: 1 }
     bent[POSE.leftWrist] = { x: 0.2, y: 0.2, visibility: 1 }
     expect(elbowAngle(bent)).toBeCloseTo(90, 0)
+  })
+})
+
+describe('orientation du corps', () => {
+  it('distingue debout (vertical) et planche (horizontal)', () => {
+    const standing = emptyPose()
+    standing[POSE.leftShoulder] = { x: 0.5, y: 0.2, visibility: 1 }
+    standing[POSE.leftAnkle] = { x: 0.5, y: 0.9, visibility: 1 }
+    expect(isBodyVertical(standing)).toBe(true)
+    expect(isBodyHorizontal(standing)).toBe(false)
+
+    const plank = emptyPose()
+    plank[POSE.leftShoulder] = { x: 0.2, y: 0.5, visibility: 1 }
+    plank[POSE.leftAnkle] = { x: 0.9, y: 0.55, visibility: 1 }
+    expect(isBodyHorizontal(plank)).toBe(true)
+    expect(isBodyVertical(plank)).toBe(false)
   })
 })

@@ -16,37 +16,65 @@ const ARM_POINTS = [
 
 const BODY_POINTS = [POSE.leftShoulder, POSE.rightShoulder, POSE.leftHip, POSE.rightHip, POSE.leftAnkle, POSE.rightAnkle]
 
+function side(lm: Landmark[]) {
+  const s = bestArmSide(lm)
+  const i = s === 'left'
+  return {
+    shoulder: lm[i ? POSE.leftShoulder : POSE.rightShoulder],
+    elbow: lm[i ? POSE.leftElbow : POSE.rightElbow],
+    wrist: lm[i ? POSE.leftWrist : POSE.rightWrist],
+    hip: lm[i ? POSE.leftHip : POSE.rightHip],
+    ankle: lm[i ? POSE.leftAnkle : POSE.rightAnkle],
+  }
+}
+
 /** Angle du coude du côté le mieux visible (épaule-coude-poignet). */
 export function elbowAngle(lm: Landmark[]): number {
-  if (bestArmSide(lm) === 'left') {
-    return angle(lm[POSE.leftShoulder], lm[POSE.leftElbow], lm[POSE.leftWrist])
-  }
-  return angle(lm[POSE.rightShoulder], lm[POSE.rightElbow], lm[POSE.rightWrist])
+  const s = side(lm)
+  return angle(s.shoulder, s.elbow, s.wrist)
 }
 
 /** Angle de la ligne du corps épaule-hanche-cheville (~180° si gainé). */
 export function bodyLineAngle(lm: Landmark[]): number {
-  if (bestArmSide(lm) === 'left') {
-    return angle(lm[POSE.leftShoulder], lm[POSE.leftHip], lm[POSE.leftAnkle])
-  }
-  return angle(lm[POSE.rightShoulder], lm[POSE.rightHip], lm[POSE.rightAnkle])
+  const s = side(lm)
+  return angle(s.shoulder, s.hip, s.ankle)
+}
+
+/** Le corps est-il plutôt horizontal (pompes / planche vues de côté) ? */
+export function isBodyHorizontal(lm: Landmark[]): boolean {
+  const s = side(lm)
+  const dx = Math.abs(s.shoulder.x - s.ankle.x)
+  const dy = Math.abs(s.shoulder.y - s.ankle.y)
+  return dx > dy * 1.3
+}
+
+/** Le corps est-il plutôt vertical (tractions, suspension) ? */
+export function isBodyVertical(lm: Landmark[]): boolean {
+  const s = side(lm)
+  const dx = Math.abs(s.shoulder.x - s.ankle.x)
+  const dy = Math.abs(s.shoulder.y - s.ankle.y)
+  return dy > dx * 1.3
+}
+
+/** Poignets au-dessus des épaules (bras tendus vers le haut, barre). */
+export function wristsAboveShoulders(lm: Landmark[]): boolean {
+  const s = side(lm)
+  return s.wrist.y < s.shoulder.y // y croît vers le bas
 }
 
 function backStraightFeedback(lm: Landmark[]): string[] {
   return bodyLineAngle(lm) < 152 ? ['Garde le corps gainé, ne casse pas la ligne'] : []
 }
 
-/** Feedback d'alignement des hanches en planche (y croît vers le bas). */
-function plankHipFeedback(lm: Landmark[]): string[] {
-  const side = bestArmSide(lm)
-  const shoulder = lm[side === 'left' ? POSE.leftShoulder : POSE.rightShoulder]
-  const hip = lm[side === 'left' ? POSE.leftHip : POSE.rightHip]
-  const ankle = lm[side === 'left' ? POSE.leftAnkle : POSE.rightAnkle]
-  const expected = (shoulder.y + ankle.y) / 2
-  const delta = hip.y - expected
+/** Feedback gainage : guide vers la position, puis aligne les hanches. */
+function plankFeedback(lm: Landmark[]): string[] {
+  if (!isBodyHorizontal(lm)) return ['Mets-toi en position de planche (corps à l’horizontale)']
+  const s = side(lm)
+  const expected = (s.shoulder.y + s.ankle.y) / 2
+  const delta = s.hip.y - expected
   if (delta < -0.05) return ['Baisse un peu les hanches']
   if (delta > 0.05) return ['Relève les hanches, serre les fessiers']
-  return []
+  return ['Tiens la position 💪']
 }
 
 export const COACH_CONFIGS: Record<ExerciseId, CoachConfig> = {
@@ -57,6 +85,8 @@ export const COACH_CONFIGS: Record<ExerciseId, CoachConfig> = {
     metric: elbowAngle,
     downThreshold: 95,
     upThreshold: 155,
+    ready: isBodyHorizontal,
+    readyHint: 'Mets-toi en position de pompes (corps à l’horizontale)',
     posture: backStraightFeedback,
   },
   tractions: {
@@ -67,13 +97,15 @@ export const COACH_CONFIGS: Record<ExerciseId, CoachConfig> = {
     // Bas = bras tendus (grand angle), haut = bras fléchis (petit angle).
     downThreshold: 75,
     upThreshold: 155,
+    ready: (lm) => isBodyVertical(lm) && wristsAboveShoulders(lm),
+    readyHint: 'Suspends-toi à la barre, bras au-dessus de la tête',
   },
   gainage: {
     mode: 'hold',
     visibilityPoints: BODY_POINTS,
     minVisibility: 0.5,
-    inPosition: (lm) => bodyLineAngle(lm) > 150,
-    posture: plankHipFeedback,
+    inPosition: (lm) => bodyLineAngle(lm) > 150 && isBodyHorizontal(lm),
+    posture: plankFeedback,
   },
 }
 

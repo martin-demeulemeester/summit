@@ -4,6 +4,19 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.1] - 2026-06-18
+
+### Corrigé
+
+- **Détection coach affinée** : ajout de gardes d'orientation pour éviter les faux
+  comptages. Le gainage ne se déclenche plus debout (corps devant être à
+  l'horizontale), les pompes exigent une position horizontale, les tractions une
+  position verticale bras au-dessus de la tête. Feedback de placement quand la
+  position n'est pas valide.
+- **Installation PWA sur Android** : ajout d'icônes PNG 192/512 + maskable (Chrome
+  exige du PNG pour proposer l'installation ; on n'avait que du SVG). Script de
+  génération `scripts/gen-icons.mjs`.
+
 ## [0.8.0] - 2026-06-18
 
 ### Ajouté

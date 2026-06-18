@@ -16,6 +16,10 @@ export interface RepConfig {
   /** Au-dessus de ce seuil = position haute (fin de rep). */
   upThreshold: number
   posture?: (lm: Landmark[]) => string[]
+  /** Position valide pour que les reps comptent (ex. corps à l'horizontale). */
+  ready?: (lm: Landmark[]) => boolean
+  /** Message affiché tant que la position n'est pas valide. */
+  readyHint?: string
 }
 
 export interface HoldConfig {
@@ -63,6 +67,18 @@ function createRepCounter(config: RepConfig): CoachCounter {
         return { kind: 'reps', reps, phase, value: NaN, feedback: [LOW_VIS_FEEDBACK], lowVisibility: true }
       }
       const value = config.metric(lm)
+      // Tant que la position n'est pas valide, on ne compte pas (évite les
+      // faux comptages debout, hors cadre, etc.).
+      if (config.ready && !config.ready(lm)) {
+        return {
+          kind: 'reps',
+          reps,
+          phase,
+          value,
+          feedback: config.readyHint ? [config.readyHint] : [],
+          lowVisibility: false,
+        }
+      }
       if (phase === 'up' && value < config.downThreshold) {
         phase = 'down'
       } else if (phase === 'down' && value > config.upThreshold) {

@@ -2,6 +2,16 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.8.1",
+      "date": "2026-06-18",
+      "changes": {
+        "fixed": [
+          "Détection coach affinée : gardes d'orientation (gainage/pompes horizontal, tractions vertical bras hauts) pour éviter les faux comptages debout ; feedback de placement",
+          "Installation PWA Android : icônes PNG 192/512 + maskable (le SVG seul ne déclenchait pas l'install Chrome) ; script scripts/gen-icons.mjs"
+        ]
+      }
+    },
+    {
       "version": "0.8.0",
       "date": "2026-06-18",
       "changes": {

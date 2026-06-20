@@ -1,0 +1,24 @@
+{
+  "projectId": "ad1c0950-70ff-4055-8437-66f061bcae23",
+  "pkg": "summit",
+  "globalName": "Summit",
+  "shape": "package",
+  "srcDir": "src",
+  "tsconfig": "tsconfig.json",
+  "cssEntry": ".design-sync/ds-styles.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "provider": { "component": "MemoryRouter" },
+  "componentSrcMap": {
+    "ProgressBar": "src/components/ProgressBar.tsx",
+    "StreakHeader": "src/components/StreakHeader.tsx",
+    "BottomNav": "src/components/BottomNav.tsx",
+    "CloudAccount": "src/components/CloudAccount.tsx",
+    "CoachCamera": "src/coach/CoachCamera.tsx",
+    "TodayScreen": "src/pages/Today.tsx",
+    "WorkoutScreen": "src/pages/Workout.tsx",
+    "ProgressScreen": "src/pages/Progress.tsx",
+    "HistoryScreen": "src/pages/History.tsx",
+    "SettingsScreen": "src/pages/Settings.tsx",
+    "CoachScreen": "src/pages/Coach.tsx"
+  }
+}

@@ -31,3 +31,10 @@ supabase/.temp
 
 # Artefacts de build TypeScript
 *.tsbuildinfo
+
+# /design-sync (convertisseur, build, cache)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules

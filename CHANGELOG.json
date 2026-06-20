@@ -2,6 +2,18 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.8.3",
+      "date": "2026-06-19",
+      "changes": {
+        "changed": [
+          "Coach : détection de face comme de côté",
+          "Pompes : seuils assouplis (reps rapides comptées), garde 'vue de côté' retirée",
+          "Tractions : comptage menton-au-niveau-des-mains (mains = repère de barre, MediaPipe ne voit pas les objets)",
+          "Gainage : chrono dès que le corps est visible (de face ou de côté), feedback hanches en vue de côté uniquement"
+        ]
+      }
+    },
+    {
       "version": "0.8.2",
       "date": "2026-06-19",
       "changes": {

@@ -4,6 +4,19 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.3] - 2026-06-19
+
+### Modifié
+
+- **Coach caméra : détection revue pour fonctionner de face comme de côté.**
+  - Pompes : seuils d'angle assouplis (les répétitions rapides ou moins amples
+    comptent désormais) ; suppression de la garde « vue de côté obligatoire ».
+  - Tractions : comptage basé sur le menton qui monte au niveau des mains, les
+    mains servant de repère de barre (MediaPipe ne détecte pas les objets, donc
+    pas la barre directement).
+  - Gainage : le chrono tourne dès que le corps est bien visible (de face ou de
+    côté) ; le feedback d'alignement des hanches n'apparaît qu'en vue de côté.
+
 ## [0.8.2] - 2026-06-19
 
 ### Sécurité

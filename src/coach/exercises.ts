@@ -1,5 +1,5 @@
-// Configuration de la coach par exercice : seuils d'angles, posture, conseils.
-// Les seuils sont centralisés ici pour être ajustés facilement.
+// Configuration de la coach par exercice : seuils, posture, conseils.
+// Pensé pour marcher de face comme de côté. Seuils centralisés ici (faciles à régler).
 
 import { POSE, angle, bestArmSide, type Landmark } from './geometry'
 import type { CoachConfig } from './repCounter'
@@ -16,9 +16,10 @@ const ARM_POINTS = [
 
 const BODY_POINTS = [POSE.leftShoulder, POSE.rightShoulder, POSE.leftHip, POSE.rightHip, POSE.leftAnkle, POSE.rightAnkle]
 
-function side(lm: Landmark[]) {
-  const s = bestArmSide(lm)
-  const i = s === 'left'
+const PULLUP_POINTS = [POSE.nose, POSE.leftWrist, POSE.rightWrist, POSE.leftShoulder, POSE.rightShoulder]
+
+function sidePts(lm: Landmark[]) {
+  const i = bestArmSide(lm) === 'left'
   return {
     shoulder: lm[i ? POSE.leftShoulder : POSE.rightShoulder],
     elbow: lm[i ? POSE.leftElbow : POSE.rightElbow],
@@ -30,46 +31,53 @@ function side(lm: Landmark[]) {
 
 /** Angle du coude du côté le mieux visible (épaule-coude-poignet). */
 export function elbowAngle(lm: Landmark[]): number {
-  const s = side(lm)
+  const s = sidePts(lm)
   return angle(s.shoulder, s.elbow, s.wrist)
 }
 
 /** Angle de la ligne du corps épaule-hanche-cheville (~180° si gainé). */
 export function bodyLineAngle(lm: Landmark[]): number {
-  const s = side(lm)
+  const s = sidePts(lm)
   return angle(s.shoulder, s.hip, s.ankle)
 }
 
-/** Le corps est-il plutôt horizontal (pompes / planche vues de côté) ? */
+/** Corps plutôt horizontal (planche / pompes vues de côté) ? Sert au feedback. */
 export function isBodyHorizontal(lm: Landmark[]): boolean {
-  const s = side(lm)
-  const dx = Math.abs(s.shoulder.x - s.ankle.x)
-  const dy = Math.abs(s.shoulder.y - s.ankle.y)
-  return dx > dy * 1.3
+  const s = sidePts(lm)
+  return Math.abs(s.shoulder.x - s.ankle.x) > Math.abs(s.shoulder.y - s.ankle.y) * 1.3
 }
 
-/** Le corps est-il plutôt vertical (tractions, suspension) ? */
+/** Corps plutôt vertical (suspension, tractions) ? */
 export function isBodyVertical(lm: Landmark[]): boolean {
-  const s = side(lm)
-  const dx = Math.abs(s.shoulder.x - s.ankle.x)
-  const dy = Math.abs(s.shoulder.y - s.ankle.y)
-  return dy > dx * 1.3
+  const s = sidePts(lm)
+  return Math.abs(s.shoulder.y - s.ankle.y) > Math.abs(s.shoulder.x - s.ankle.x) * 1.3
 }
 
-/** Poignets au-dessus des épaules (bras tendus vers le haut, barre). */
+/** Poignets au-dessus des épaules (mains sur la barre, bras vers le haut). */
 export function wristsAboveShoulders(lm: Landmark[]): boolean {
-  const s = side(lm)
+  const s = sidePts(lm)
   return s.wrist.y < s.shoulder.y // y croît vers le bas
 }
 
-function backStraightFeedback(lm: Landmark[]): string[] {
-  return bodyLineAngle(lm) < 152 ? ['Garde le corps gainé, ne casse pas la ligne'] : []
+/**
+ * Écart vertical menton (nez) vs mains. Les mains tiennent la barre, donc c'est
+ * un proxy de « menton au-dessus de la barre » (MediaPipe ne voit pas la barre).
+ * Positif = nez SOUS les mains (suspension), négatif = menton au-dessus.
+ */
+export function chinAboveHandsGap(lm: Landmark[]): number {
+  const wristY = (lm[POSE.leftWrist].y + lm[POSE.rightWrist].y) / 2
+  return lm[POSE.nose].y - wristY
 }
 
-/** Feedback gainage : guide vers la position, puis aligne les hanches. */
+function backStraightFeedback(lm: Landmark[]): string[] {
+  // Feedback de dos uniquement quand la vue de côté est exploitable.
+  if (!isBodyHorizontal(lm)) return []
+  return bodyLineAngle(lm) < 150 ? ['Garde le corps gainé, ne casse pas la ligne'] : []
+}
+
 function plankFeedback(lm: Landmark[]): string[] {
-  if (!isBodyHorizontal(lm)) return ['Mets-toi en position de planche (corps à l’horizontale)']
-  const s = side(lm)
+  if (!isBodyHorizontal(lm)) return ['Tiens la position 💪'] // de face : pas d'analyse de hanches fiable
+  const s = sidePts(lm)
   const expected = (s.shoulder.y + s.ankle.y) / 2
   const delta = s.hip.y - expected
   if (delta < -0.05) return ['Baisse un peu les hanches']
@@ -81,40 +89,40 @@ export const COACH_CONFIGS: Record<ExerciseId, CoachConfig> = {
   pompes: {
     mode: 'reps',
     visibilityPoints: ARM_POINTS,
-    minVisibility: 0.5,
+    minVisibility: 0.45,
     metric: elbowAngle,
-    downThreshold: 95,
-    upThreshold: 155,
-    ready: isBodyHorizontal,
-    readyHint: 'Mets-toi en position de pompes (corps à l’horizontale)',
+    // Seuils assouplis : les reps rapides / moins amples comptent. Marche de face ou de côté.
+    downThreshold: 110,
+    upThreshold: 148,
     posture: backStraightFeedback,
   },
   tractions: {
     mode: 'reps',
-    visibilityPoints: ARM_POINTS,
-    minVisibility: 0.5,
-    metric: elbowAngle,
-    // Bas = bras tendus (grand angle), haut = bras fléchis (petit angle).
-    downThreshold: 75,
-    upThreshold: 155,
-    ready: (lm) => isBodyVertical(lm) && wristsAboveShoulders(lm),
-    readyHint: 'Suspends-toi à la barre, bras au-dessus de la tête',
+    visibilityPoints: PULLUP_POINTS,
+    minVisibility: 0.4,
+    // Cycle suspension -> menton au niveau des mains (barre) -> suspension.
+    metric: chinAboveHandsGap,
+    downThreshold: 0.02, // menton atteint la hauteur des mains
+    upThreshold: 0.1, // de retour en suspension complète
+    ready: wristsAboveShoulders,
+    readyHint: 'Attrape la barre : mains au-dessus de la tête, bras tendus',
   },
   gainage: {
     mode: 'hold',
     visibilityPoints: BODY_POINTS,
-    minVisibility: 0.5,
-    inPosition: (lm) => bodyLineAngle(lm) > 150 && isBodyHorizontal(lm),
+    minVisibility: 0.45,
+    // Le chrono tourne dès que le corps est bien visible (de face comme de côté).
+    inPosition: () => true,
     posture: plankFeedback,
   },
 }
 
-/** Conseils de placement caméra + statut beta par exercice. */
+/** Conseils de placement caméra par exercice. */
 export const COACH_META: Record<ExerciseId, { beta: boolean; tip: string }> = {
-  pompes: { beta: false, tip: 'Pose le téléphone au sol, de côté, à ~2 m. Tout le corps doit être visible.' },
+  pompes: { beta: false, tip: 'De face ou de côté, à ~2 m, épaules-coudes-poignets visibles.' },
   tractions: {
     beta: true,
-    tip: 'Détection moins fiable. Cadre de côté pour voir un bras complet (épaule, coude, poignet).',
+    tip: 'Cadre de façon à voir tes mains sur la barre et ta tête. Le comptage se base sur le menton qui monte au niveau des mains.',
   },
-  gainage: { beta: false, tip: 'Téléphone de côté à ~2 m, corps entier dans le cadre.' },
+  gainage: { beta: false, tip: 'Corps entier dans le cadre (de face ou de côté). Le chrono tourne tant que tu es visible.' },
 }

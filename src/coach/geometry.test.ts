@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { POSE, angle, bestArmSide, type Landmark } from './geometry'
-import { elbowAngle, isBodyHorizontal, isBodyVertical } from './exercises'
+import { chinAboveHandsGap, elbowAngle, isBodyHorizontal, isBodyVertical } from './exercises'
 
 function emptyPose(): Landmark[] {
   return Array.from({ length: 33 }, () => ({ x: 0, y: 0, visibility: 0 }))
@@ -46,5 +46,21 @@ describe('orientation du corps', () => {
     plank[POSE.leftAnkle] = { x: 0.9, y: 0.55, visibility: 1 }
     expect(isBodyHorizontal(plank)).toBe(true)
     expect(isBodyVertical(plank)).toBe(false)
+  })
+})
+
+describe('chinAboveHandsGap (tractions)', () => {
+  it('positif en suspension (nez sous les mains), négatif menton au-dessus', () => {
+    const hanging = emptyPose()
+    hanging[POSE.nose] = { x: 0.5, y: 0.4, visibility: 1 } // nez plus bas (y grand)
+    hanging[POSE.leftWrist] = { x: 0.4, y: 0.2, visibility: 1 } // mains plus haut (y petit)
+    hanging[POSE.rightWrist] = { x: 0.6, y: 0.2, visibility: 1 }
+    expect(chinAboveHandsGap(hanging)).toBeGreaterThan(0)
+
+    const chinUp = emptyPose()
+    chinUp[POSE.nose] = { x: 0.5, y: 0.18, visibility: 1 } // nez au-dessus des mains
+    chinUp[POSE.leftWrist] = { x: 0.4, y: 0.2, visibility: 1 }
+    chinUp[POSE.rightWrist] = { x: 0.6, y: 0.2, visibility: 1 }
+    expect(chinAboveHandsGap(chinUp)).toBeLessThan(0)
   })
 })

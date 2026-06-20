@@ -4,6 +4,25 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.2] - 2026-06-19
+
+### Sécurité
+
+- Durcissement de l'auth maison (migration `0004_auth_hardening.sql`) :
+  anti-brute-force sur la connexion (5 essais / 15 min par pseudo, puis verrou),
+  throttling des créations de compte (anti-spam), purge des sessions expirées
+  (`summit_cleanup_sessions`), durée de session ramenée de 365 à 90 jours.
+
+### Performance
+
+- Page Progression (Recharts) chargée en lazy → bundle principal allégé
+  (Recharts ~375 Ko sorti dans un chunk séparé).
+
+### Outillage
+
+- CI GitHub Actions : build (typecheck + Vite + PWA) et tests unitaires à chaque
+  push sur `main` et chaque pull request.
+
 ## [0.8.1] - 2026-06-18
 
 ### Corrigé

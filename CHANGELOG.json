@@ -2,6 +2,21 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.8.2",
+      "date": "2026-06-19",
+      "changes": {
+        "security": [
+          "Durcissement auth maison (migration 0004) : anti-brute-force signin (5/15min par pseudo), throttling signup, purge des sessions expirées, sessions 90j au lieu de 365j"
+        ],
+        "performance": [
+          "Page Progression (Recharts) en lazy-load → bundle principal allégé"
+        ],
+        "tooling": [
+          "CI GitHub Actions : build + tests sur push main et pull requests"
+        ]
+      }
+    },
+    {
       "version": "0.8.1",
       "date": "2026-06-18",
       "changes": {

@@ -22,6 +22,15 @@ Puis exécute [`supabase/migrations/0003_custom_auth.sql`](supabase/migrations/0
 pour activer l'auth maison pseudo + mot de passe (profils, sessions, hash côté
 Postgres et fonctions RPC Summit).
 
+Enfin exécute [`supabase/migrations/0004_auth_hardening.sql`](supabase/migrations/0004_auth_hardening.sql)
+(durcissement : anti-brute-force, throttling, purge des sessions, TTL 90 jours).
+Optionnel : planifie la purge des sessions expirées via pg_cron :
+
+```sql
+select cron.schedule('summit-cleanup-sessions', '0 4 * * *',
+  $$ select public.summit_cleanup_sessions(); $$);
+```
+
 ## 3. Configurer l'app (front)
 
 Copie `.env.example` en `.env.local` et renseigne :

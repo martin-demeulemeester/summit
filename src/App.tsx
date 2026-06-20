@@ -3,14 +3,18 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
 import Today from './pages/Today'
 import Workout from './pages/Workout'
-import Progress from './pages/Progress'
 import History from './pages/History'
 import SettingsPage from './pages/Settings'
 import { useAuth } from './lib/auth'
 import { fullSync } from './lib/sync'
 
-// Lazy : MediaPipe (coach caméra) reste hors du bundle principal.
+// Lazy : MediaPipe (coach caméra) et Recharts (progression) hors du bundle principal.
 const Coach = lazy(() => import('./pages/Coach'))
+const Progress = lazy(() => import('./pages/Progress'))
+
+function PageFallback({ label }: { label: string }) {
+  return <div className="flex h-64 items-center justify-center text-summit-muted">{label}</div>
+}
 
 /** Synchronise avec le cloud à la connexion puis périodiquement. */
 function SyncManager() {
@@ -39,12 +43,19 @@ export default function App() {
             <Route
               path="/coach"
               element={
-                <Suspense fallback={<div className="flex h-64 items-center justify-center text-summit-muted">Chargement de la coach…</div>}>
+                <Suspense fallback={<PageFallback label="Chargement de la coach…" />}>
                   <Coach />
                 </Suspense>
               }
             />
-            <Route path="/progression" element={<Progress />} />
+            <Route
+              path="/progression"
+              element={
+                <Suspense fallback={<PageFallback label="Chargement…" />}>
+                  <Progress />
+                </Suspense>
+              }
+            />
             <Route path="/historique" element={<History />} />
             <Route path="/reglages" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

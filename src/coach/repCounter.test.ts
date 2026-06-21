@@ -92,16 +92,16 @@ const holdConfig: HoldConfig = {
 describe('compteur de maintien (gainage)', () => {
   it('cumule le temps uniquement en position', () => {
     const c = createCoachCounter(holdConfig)
-    c.update([{ x: 1, y: 0, visibility: 1 }], 1000) // en position +1s
-    c.update([{ x: 0, y: 0, visibility: 1 }], 1000) // hors position : pas de cumul
-    const r = c.update([{ x: 1, y: 0, visibility: 1 }], 500) // +0.5s
+    c.update([{ x: 1, y: 0, visibility: 1 }], undefined, 1000) // en position +1s
+    c.update([{ x: 0, y: 0, visibility: 1 }], undefined, 1000) // hors position : pas de cumul
+    const r = c.update([{ x: 1, y: 0, visibility: 1 }], undefined, 500) // +0.5s
     expect(r.kind).toBe('hold')
     expect(r.kind === 'hold' && r.heldMs).toBe(1500)
   })
 
   it('ne cumule pas quand la visibilité est trop faible', () => {
     const c = createCoachCounter(holdConfig)
-    const r = c.update([{ x: 1, y: 0, visibility: 0.2 }], 1000)
+    const r = c.update([{ x: 1, y: 0, visibility: 0.2 }], undefined, 1000)
     expect(r.lowVisibility).toBe(true)
     expect(r.kind === 'hold' && r.heldMs).toBe(0)
   })

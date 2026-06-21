@@ -2,6 +2,18 @@
   "name": "summit",
   "versions": [
     {
+      "version": "0.8.4",
+      "date": "2026-06-19",
+      "changes": {
+        "added": [
+          "Coach : détection d'orientation 3D (world landmarks, profondeur) → distingue pompe/planche/debout quel que soit l'angle, fonctionne de face ; repli 2D si pas de profondeur",
+          "Gainage : chrono uniquement en planche réelle ; pompes : comptage bloqué hors position ; tractions : suspension + mains au-dessus de la tête",
+          "Caméra selfie (frontale) par défaut",
+          "Navigation par swipe horizontal gauche/droite (mobile)"
+        ]
+      }
+    },
+    {
       "version": "0.8.3",
       "date": "2026-06-19",
       "changes": {

@@ -25,7 +25,7 @@ export default function CoachCamera({ exerciseId, target, onComplete, onManualSk
   const config = COACH_CONFIGS[exerciseId]
   const isHold = config.mode === 'hold'
 
-  const [facing, setFacing] = useState<'user' | 'environment'>('environment')
+  const [facing, setFacing] = useState<'user' | 'environment'>('user')
   const [status, setStatus] = useState<Status>('loading')
   const [errorMsg, setErrorMsg] = useState('')
   const [live, setLive] = useState<CoachUpdate | null>(null)
@@ -69,8 +69,9 @@ export default function CoachCamera({ exerciseId, target, onComplete, onManualSk
             lastTs = now
             const result = landmarker.detectForVideo(v, now)
             const lm = result.landmarks?.[0] as Landmark[] | undefined
+            const world = result.worldLandmarks?.[0] as Landmark[] | undefined
             if (lm) {
-              const upd = counter.update(lm, dt)
+              const upd = counter.update(lm, world, dt)
               setLive(upd)
               drawSkeleton(canvasRef.current, v, result.landmarks?.[0], facing === 'user')
               const reached =

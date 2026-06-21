@@ -53,3 +53,45 @@ export function bestArmSide(landmarks: Landmark[]): 'left' | 'right' {
   const right = avgVisibility(landmarks, [POSE.rightShoulder, POSE.rightElbow, POSE.rightWrist])
   return right > left ? 'right' : 'left'
 }
+
+// --- Orientation 3D (world landmarks MediaPipe) ---------------------------
+// Les world landmarks sont en mètres avec un axe vertical (y) et la profondeur
+// (z). Inclure z permet de mesurer l'orientation réelle du corps quel que soit
+// l'angle caméra : une planche de face s'étend surtout en profondeur (z), pas
+// en hauteur d'image, là où la 2D (x,y) seule échouait.
+
+function mid3(a: Landmark, b: Landmark) {
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: ((a.z ?? 0) + (b.z ?? 0)) / 2 }
+}
+
+/** Les world landmarks 3D sont-ils exploitables (présents avec profondeur) ? */
+export function hasWorld(world?: Landmark[]): world is Landmark[] {
+  return (
+    !!world &&
+    world.length > POSE.rightAnkle &&
+    world[POSE.leftShoulder] != null &&
+    world[POSE.leftAnkle] != null
+  )
+}
+
+/** Extension verticale vs horizontale (profondeur incluse) du tronc->jambes. */
+export function bodyOrientation3d(world: Landmark[]): { horizontal: number; vertical: number } {
+  const sh = mid3(world[POSE.leftShoulder], world[POSE.rightShoulder])
+  const an = mid3(world[POSE.leftAnkle], world[POSE.rightAnkle])
+  return {
+    horizontal: Math.hypot(an.x - sh.x, an.z - sh.z),
+    vertical: Math.abs(an.y - sh.y),
+  }
+}
+
+/** Corps allongé/horizontal en 3D (planche, pompe) - quel que soit l'angle. */
+export function isHorizontalBody3d(world: Landmark[]): boolean {
+  const o = bodyOrientation3d(world)
+  return o.horizontal > o.vertical * 0.9
+}
+
+/** Corps debout/vertical en 3D (station debout, suspension). */
+export function isVerticalBody3d(world: Landmark[]): boolean {
+  const o = bodyOrientation3d(world)
+  return o.vertical > o.horizontal * 1.1
+}

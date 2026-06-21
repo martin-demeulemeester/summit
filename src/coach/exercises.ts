@@ -1,7 +1,15 @@
 // Configuration de la coach par exercice : seuils, posture, conseils.
 // Pensé pour marcher de face comme de côté. Seuils centralisés ici (faciles à régler).
 
-import { POSE, angle, bestArmSide, type Landmark } from './geometry'
+import {
+  POSE,
+  angle,
+  bestArmSide,
+  hasWorld,
+  isHorizontalBody3d,
+  isVerticalBody3d,
+  type Landmark,
+} from './geometry'
 import type { CoachConfig } from './repCounter'
 import type { ExerciseId } from '../domain/routine'
 
@@ -59,6 +67,16 @@ export function wristsAboveShoulders(lm: Landmark[]): boolean {
   return s.wrist.y < s.shoulder.y // y croît vers le bas
 }
 
+/** Corps horizontal : 3D (profondeur incluse, marche de face) si dispo, sinon 2D. */
+function bodyHorizontal(lm: Landmark[], world?: Landmark[]): boolean {
+  return hasWorld(world) ? isHorizontalBody3d(world) : isBodyHorizontal(lm)
+}
+
+/** Corps vertical : 3D si dispo, sinon 2D. */
+function bodyVertical(lm: Landmark[], world?: Landmark[]): boolean {
+  return hasWorld(world) ? isVerticalBody3d(world) : isBodyVertical(lm)
+}
+
 /**
  * Écart vertical menton (nez) vs mains. Les mains tiennent la barre, donc c'est
  * un proxy de « menton au-dessus de la barre » (MediaPipe ne voit pas la barre).
@@ -70,13 +88,14 @@ export function chinAboveHandsGap(lm: Landmark[]): number {
 }
 
 function backStraightFeedback(lm: Landmark[]): string[] {
-  // Feedback de dos uniquement quand la vue de côté est exploitable.
+  // Feedback de dos uniquement quand la vue de côté est exploitable (analyse 2D).
   if (!isBodyHorizontal(lm)) return []
   return bodyLineAngle(lm) < 150 ? ['Garde le corps gainé, ne casse pas la ligne'] : []
 }
 
 function plankFeedback(lm: Landmark[]): string[] {
-  if (!isBodyHorizontal(lm)) return ['Tiens la position 💪'] // de face : pas d'analyse de hanches fiable
+  // L'alignement des hanches n'est fiable qu'en vue de côté (2D).
+  if (!isBodyHorizontal(lm)) return ['Tiens la position 💪']
   const s = sidePts(lm)
   const expected = (s.shoulder.y + s.ankle.y) / 2
   const delta = s.hip.y - expected
@@ -91,9 +110,13 @@ export const COACH_CONFIGS: Record<ExerciseId, CoachConfig> = {
     visibilityPoints: ARM_POINTS,
     minVisibility: 0.45,
     metric: elbowAngle,
-    // Seuils assouplis : les reps rapides / moins amples comptent. Marche de face ou de côté.
+    // Seuils assouplis : les reps rapides / moins amples comptent.
     downThreshold: 110,
     upThreshold: 148,
+    // Compte seulement en position de pompe (corps horizontal en 3D) -> évite les
+    // faux comptages debout, et marche de face grâce à la profondeur.
+    ready: bodyHorizontal,
+    readyHint: 'Mets-toi en position de pompes',
     posture: backStraightFeedback,
   },
   tractions: {
@@ -104,15 +127,15 @@ export const COACH_CONFIGS: Record<ExerciseId, CoachConfig> = {
     metric: chinAboveHandsGap,
     downThreshold: 0.02, // menton atteint la hauteur des mains
     upThreshold: 0.1, // de retour en suspension complète
-    ready: wristsAboveShoulders,
-    readyHint: 'Attrape la barre : mains au-dessus de la tête, bras tendus',
+    ready: (lm, world) => bodyVertical(lm, world) && wristsAboveShoulders(lm),
+    readyHint: 'Attrape la barre : suspendu, mains au-dessus de la tête',
   },
   gainage: {
     mode: 'hold',
     visibilityPoints: BODY_POINTS,
     minVisibility: 0.45,
-    // Le chrono tourne dès que le corps est bien visible (de face comme de côté).
-    inPosition: () => true,
+    // Le chrono ne tourne qu'en planche : corps horizontal en 3D (marche de face).
+    inPosition: bodyHorizontal,
     posture: plankFeedback,
   },
 }

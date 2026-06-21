@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { POSE, angle, bestArmSide, type Landmark } from './geometry'
+import { POSE, angle, bestArmSide, isHorizontalBody3d, isVerticalBody3d, type Landmark } from './geometry'
 import { chinAboveHandsGap, elbowAngle, isBodyHorizontal, isBodyVertical } from './exercises'
 
 function emptyPose(): Landmark[] {
@@ -46,6 +46,28 @@ describe('orientation du corps', () => {
     plank[POSE.leftAnkle] = { x: 0.9, y: 0.55, visibility: 1 }
     expect(isBodyHorizontal(plank)).toBe(true)
     expect(isBodyVertical(plank)).toBe(false)
+  })
+})
+
+describe('orientation 3D (world landmarks, profondeur incluse)', () => {
+  it('planche de face : corps étendu en profondeur (z) → horizontal', () => {
+    const w = emptyPose()
+    w[POSE.leftShoulder] = { x: -0.1, y: 0, z: 0 }
+    w[POSE.rightShoulder] = { x: 0.1, y: 0, z: 0 }
+    w[POSE.leftAnkle] = { x: -0.1, y: 0.02, z: 1.2 }
+    w[POSE.rightAnkle] = { x: 0.1, y: 0.02, z: 1.2 }
+    expect(isHorizontalBody3d(w)).toBe(true)
+    expect(isVerticalBody3d(w)).toBe(false)
+  })
+
+  it('debout : corps étendu en hauteur (y) → vertical', () => {
+    const w = emptyPose()
+    w[POSE.leftShoulder] = { x: -0.1, y: 0, z: 0 }
+    w[POSE.rightShoulder] = { x: 0.1, y: 0, z: 0 }
+    w[POSE.leftAnkle] = { x: -0.1, y: 1.2, z: 0.02 }
+    w[POSE.rightAnkle] = { x: 0.1, y: 1.2, z: 0.02 }
+    expect(isVerticalBody3d(w)).toBe(true)
+    expect(isHorizontalBody3d(w)).toBe(false)
   })
 })
 

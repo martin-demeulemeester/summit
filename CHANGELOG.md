@@ -4,6 +4,20 @@ Toutes les modifications notables de Summit sont documentées dans ce fichier.
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/) et le projet
 respecte [SemVer](https://semver.org/lang/fr/).
 
+## [0.8.4] - 2026-06-19
+
+### Ajouté
+
+- **Coach : détection d'orientation en 3D** (world landmarks MediaPipe, profondeur
+  incluse). Distingue pompe / planche / debout **quel que soit l'angle caméra** -
+  donc fonctionne **de face**. Repli automatique sur la 2D si la profondeur manque.
+  - Gainage : le chrono ne tourne qu'en planche réelle (corps horizontal en 3D).
+  - Pompes : comptage bloqué hors position de pompe.
+  - Tractions : comptage en suspension (corps vertical) + mains au-dessus de la tête.
+- **Caméra selfie (frontale) par défaut** dans la coach.
+- **Navigation par swipe** : glisser horizontalement à gauche/droite change de page
+  (mobile), dans l'ordre de la barre de navigation.
+
 ## [0.8.3] - 2026-06-19
 
 ### Modifié
